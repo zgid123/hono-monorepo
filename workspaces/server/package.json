@@ -1,0 +1,32 @@
+{
+  "name": "server",
+  "type": "module",
+  "imports": {
+    "#/*": "./src/*"
+  },
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "test": "vitest run --coverage --coverage.provider=istanbul",
+    "migrate:create": "dotenv -e .env -- drizzle-kit generate",
+    "db:migrate": "dotenv -e .env -- drizzle-kit migrate",
+    "db:migrate:test": "dotenv -e .env.test -- drizzle-kit migrate"
+  },
+  "dependencies": {
+    "@alphacifer/authkit": "^0.0.2",
+    "@alphacifer/drizzle": "^0.0.6",
+    "@alphacifer/hono": "^0.0.7",
+    "@cqrsx/core": "^0.0.2",
+    "@domain/auth": "workspace:^",
+    "@hono/node-server": "2.0.8",
+    "@hono/standard-validator": "0.2.3",
+    "@node/drizzle": "workspace:^",
+    "@node/hono": "workspace:^",
+    "arkenv": "0.12.2",
+    "hono": "4.12.28"
+  },
+  "devDependencies": {
+    "drizzle-kit": "0.31.10"
+  }
+}

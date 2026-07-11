@@ -1,0 +1,14 @@
+meta {
+  name: Get Session
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/api/v1/auth/get-session
+  body: none
+}
+
+assert {
+  res.status: eq 200
+}

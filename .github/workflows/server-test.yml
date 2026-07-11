@@ -1,0 +1,59 @@
+name: Run tests
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'packages/@core/api/**'
+      - 'packages/@data/**'
+      - 'packages/@domain/**'
+      - 'packages/@node/**'
+      - 'workspaces/server/**'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'packages/@core/api/**'
+      - 'packages/@data/**'
+      - 'packages/@domain/**'
+      - 'packages/@node/**'
+      - 'workspaces/server/**'
+
+jobs:
+  test:
+    name: Run all tests
+
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_DB: sandfin_test
+          POSTGRES_HOST_AUTH_METHOD: trust
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Prepare Node.JS and pnpm
+        uses: ./.github/actions/prepare-nodejs-pnpm
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Run tests
+        run: pnpm test
+        env:
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_USER: postgres
+          DB_PASSWORD: ''

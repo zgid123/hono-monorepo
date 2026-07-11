@@ -1,0 +1,14 @@
+meta {
+  name: List Users
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/internal/users
+  body: none
+}
+
+assert {
+  res.status: eq 200
+}
