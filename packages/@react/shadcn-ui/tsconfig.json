@@ -1,0 +1,16 @@
+{
+  "extends": "@alphacifer/tsconfig/react",
+  "compilerOptions": {
+    "declaration": true,
+    "outDir": "lib",
+    "paths": {
+      "@react/shadcn-ui/*": [
+        "./src/*"
+      ]
+    },
+    "rootDir": "src"
+  },
+  "include": [
+    "src"
+  ]
+}

@@ -24,7 +24,7 @@
     "@node/drizzle": "workspace:^",
     "@node/hono": "workspace:^",
     "arkenv": "0.12.2",
-    "hono": "4.12.28"
+    "hono": "4.12.29"
   },
   "devDependencies": {
     "drizzle-kit": "0.31.10"

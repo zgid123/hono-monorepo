@@ -7,6 +7,7 @@ export default defineConfig({
       'workspaces/**/vitest.config.ts',
     ],
     coverage: {
+      provider: 'istanbul',
       exclude: ['workspaces/server/src/infrastructure/drizzle/seeds'],
     },
   },

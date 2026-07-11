@@ -101,3 +101,4 @@ __unconfig*
 # others
 #
 workspaces/server/src/certificates/*.pem
+!packages/@react/shadcn-ui/src/lib

@@ -1,0 +1,21 @@
+{
+  "name": "@react/design-system",
+  "version": "0.0.1",
+  "exports": {
+    "./components": {
+      "types": "./src/components/index.ts",
+      "import": "./src/components/index.ts"
+    },
+    "./icons/*": "./src/icons/*",
+    "./styles.css": "./src/styles.css",
+    "./utils": "./src/utils.ts"
+  },
+  "dependencies": {
+    "@react/shadcn-ui": "workspace:^",
+    "cva": "1.0.0-beta.4",
+    "react": "19.2.7"
+  },
+  "devDependencies": {
+    "@tanstack/react-form": "1.33.1"
+  }
+}

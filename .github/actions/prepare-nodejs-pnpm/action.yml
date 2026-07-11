@@ -10,11 +10,6 @@ runs:
       with:
         node-version: 24.12.0
 
-    - name: Install latest version of npm
-      shell: bash
-      run: |
-        npm i -g npm@latest
-
     - name: Install pnpm
       uses: pnpm/action-setup@v6
       id: pnpm-install

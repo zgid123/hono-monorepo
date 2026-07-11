@@ -1,0 +1,3 @@
+@import '@react/shadcn-ui/globals.css';
+
+@source '../**/*.{ts,tsx}';

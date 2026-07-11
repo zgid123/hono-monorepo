@@ -15,7 +15,12 @@
   },
   "keywords": [
     "hono",
-    "monorepo"
+    "monorepo",
+    "react",
+    "vite",
+    "next",
+    "start",
+    "tanstack"
   ],
   "author": "Alpha",
   "license": "MIT",
@@ -30,7 +35,11 @@
     "@alphacifer/biome": "^0.0.11",
     "@alphacifer/tsconfig": "^0.0.15",
     "@biomejs/biome": "2.5.3",
+    "@chromatic-com/storybook": "5.2.1",
     "@faker-js/faker": "10.5.0",
+    "@storybook/addon-a11y": "10.5.0",
+    "@storybook/addon-docs": "10.5.0",
+    "@storybook/react-vite": "10.5.0",
     "@tailwindcss/vite": "4.3.2",
     "@types/node": "26.1.1",
     "@types/react": "19.2.17",
@@ -39,6 +48,7 @@
     "fishery": "2.4.0",
     "lefthook": "2.1.10",
     "rimraf": "6.1.3",
+    "storybook": "10.5.0",
     "tsx": "4.23.0",
     "turbo": "2.10.4",
     "typescript": "7.0.2",

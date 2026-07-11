@@ -30,7 +30,7 @@ jobs:
       postgres:
         image: postgres:18-alpine
         env:
-          POSTGRES_DB: sandfin_test
+          POSTGRES_DB: hono_monorepo_test
           POSTGRES_HOST_AUTH_METHOD: trust
         ports:
           - 5432:5432
