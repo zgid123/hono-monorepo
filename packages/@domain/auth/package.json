@@ -8,7 +8,6 @@
     "build": "tsc"
   },
   "dependencies": {
-    "@alphacifer/hono": "^0.0.7",
     "@domain/core": "workspace:^"
   }
 }

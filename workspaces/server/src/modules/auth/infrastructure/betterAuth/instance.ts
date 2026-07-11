@@ -37,6 +37,20 @@ export const auth = betterAuth({
       },
     },
   },
+  user: {
+    additionalFields: {
+      role: {
+        type: ['user', 'admin'],
+        input: false,
+        defaultValue: 'user',
+      },
+      displayName: {
+        type: 'string',
+        input: false,
+        required: false,
+      },
+    },
+  },
   advanced: {
     cookiePrefix: 'hono-monorepo',
     database: {

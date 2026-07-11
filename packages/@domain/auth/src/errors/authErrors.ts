@@ -1,0 +1,2 @@
+export const UNAUTHORIZED_CODE = 20_000;
+export const UNAUTHORIZED_NAME = 'UNAUTHORIZED';

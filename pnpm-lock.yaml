@@ -304,9 +304,6 @@ importers:
 
   packages/@domain/auth:
     dependencies:
-      '@alphacifer/hono':
-        specifier: ^0.0.7
-        version: 0.0.7(@hono/standard-validator@0.2.3(@standard-schema/spec@1.1.0)(hono@4.12.29))(arktype@2.2.3)(hono@4.12.29)(zod@4.4.3)
       '@domain/core':
         specifier: workspace:^
         version: link:../core
