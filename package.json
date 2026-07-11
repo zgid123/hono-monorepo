@@ -1,0 +1,56 @@
+{
+  "name": "hono-monorepo",
+  "version": "0.0.1",
+  "description": "Monorepo for Hono framework",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "preinstall": "npx only-allow pnpm",
+    "update-packages": "pnpm update -i -r --latest",
+    "storybook": "storybook dev -p 6006",
+    "clear": "pnpm -r exec rimraf node_modules dist .turbo lib && pnpm rimraf node_modules .turbo",
+    "build": "turbo run build",
+    "test": "vitest run --coverage",
+    "build-storybook": "storybook build"
+  },
+  "keywords": [
+    "hono",
+    "monorepo"
+  ],
+  "author": "Alpha",
+  "license": "MIT",
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": "^11.1.2",
+      "onFail": "download"
+    }
+  },
+  "devDependencies": {
+    "@alphacifer/biome": "^0.0.11",
+    "@alphacifer/tsconfig": "^0.0.15",
+    "@biomejs/biome": "2.5.3",
+    "@faker-js/faker": "10.5.0",
+    "@tailwindcss/vite": "4.3.2",
+    "@types/node": "26.1.1",
+    "@types/react": "19.2.17",
+    "@vitest/coverage-v8": "4.1.10",
+    "dotenv-cli": "11.0.0",
+    "fishery": "2.4.0",
+    "lefthook": "2.1.10",
+    "rimraf": "6.1.3",
+    "tsx": "4.23.0",
+    "turbo": "2.10.4",
+    "typescript": "7.0.2",
+    "vite": "8.1.4",
+    "vitest": "4.1.10"
+  },
+  "dependencies": {
+    "@alphacifer/core-utils": "^0.0.9",
+    "arktype": "2.2.3",
+    "better-auth": "1.6.23",
+    "detect-port": "2.1.0",
+    "dotenv": "17.4.2",
+    "tslib": "2.8.1"
+  }
+}

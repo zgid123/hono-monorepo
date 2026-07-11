@@ -1,0 +1,7 @@
+packages:
+  - 'packages/**'
+  - 'workspaces/**'
+allowBuilds:
+  esbuild: false
+  lefthook: true
+  msw: false
