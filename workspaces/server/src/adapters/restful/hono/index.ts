@@ -1,7 +1,9 @@
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { migrate } from '@alphacifer/drizzle/core';
-import { onError } from '@alphacifer/hono/core';
 import { Cqrsx } from '@cqrsx/core';
 import { type ServerType, serve } from '@hono/node-server';
+import { honoErrorHandler } from '@node/hono/handlers';
 import {
   createDrizzleMiddleware,
   createWireMiddleware,
@@ -21,31 +23,7 @@ import { endpoints } from './endpoints';
 
 export type TApp = Hono<TContext, ExtractSchema<typeof endpoints>>;
 
-interface IInitHonoReturn {
-  app: TApp;
-  server: ServerType;
-}
-
-interface IInitHonoParams {
-  beforeInitRoutes?: (app: TApp) => void;
-}
-
-export async function initHono({
-  beforeInitRoutes,
-}: IInitHonoParams = {}): Promise<IInitHonoReturn> {
-  const app = new Hono<TContext>();
-  const isTest = !!process.env.VITEST_WORKER_ID;
-
-  if (!isTest) {
-    await migrate(drizzle, {
-      migrationsSchema: 'public',
-      migrationsTable: 'orm_migrations',
-      migrationsFolder: './src/infrastructure/drizzle/migrations',
-    });
-
-    await drizzleSeed(drizzle);
-  }
-
+export function createApp(): TApp {
   const cqrsx = new Cqrsx();
 
   const container = wire({
@@ -53,7 +31,7 @@ export async function initHono({
     drizzle,
   });
 
-  app
+  return new Hono<TContext>()
     .use(
       cors({
         credentials: true,
@@ -69,28 +47,36 @@ export async function initHono({
       createWireMiddleware({
         wire: container,
       }),
-    );
+    )
+    .route('', endpoints)
+    .onError(honoErrorHandler);
+}
 
-  beforeInitRoutes?.(app);
+export async function initInfra(): Promise<void> {
+  const migrationsFolder = resolve(
+    dirname(fileURLToPath(import.meta.url)),
+    '../../../infrastructure/drizzle/migrations',
+  );
 
-  app.route('', endpoints).onError((error, c) => {
-    return onError(error, c);
+  await migrate(drizzle, {
+    migrationsFolder,
+    migrationsSchema: 'public',
+    migrationsTable: 'orm_migrations',
   });
 
-  const server = serve(
+  await drizzleSeed(drizzle);
+}
+
+export async function startServer(): Promise<ServerType> {
+  const app = createApp();
+
+  return serve(
     {
       fetch: app.fetch,
-      port: await detect(
-        isTest ? 6_000 + Number(process.env.VITEST_WORKER_ID) : 3_000,
-      ),
+      port: await detect(env.PORT),
     },
     ({ port }) => {
       console.log(`Server is running on http://localhost:${port}`);
     },
   );
-
-  return {
-    app,
-    server,
-  };
 }

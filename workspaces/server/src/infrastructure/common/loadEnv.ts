@@ -9,11 +9,14 @@ if (!isTest) {
     path: '.env',
   });
 
+  const localEnvFile =
+    process.env.NODE_ENV === 'production'
+      ? '.env.production.local'
+      : '.env.local';
+
   config({
-    path:
-      process.env.NODE_ENV === 'production'
-        ? '.env.production.local'
-        : '.env.local',
+    override: true,
+    path: localEnvFile,
   });
 } else {
   const currentDir = dirname(fileURLToPath(import.meta.url));

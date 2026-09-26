@@ -4,9 +4,9 @@ import type { TDrizzle } from '#/infrastructure/drizzle/config';
 import { wireAuth } from '#/modules/auth/adapters/restful/wire';
 
 export interface IWireContainer {
-  cqrsx: Cqrsx;
-  drizzle: TDrizzle;
-  [key: string]: unknown;
+  readonly cqrsx: Cqrsx;
+  readonly drizzle: TDrizzle;
+  readonly [key: string]: unknown;
 }
 
 interface IWireParams {

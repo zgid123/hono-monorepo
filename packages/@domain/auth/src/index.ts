@@ -1,4 +1,4 @@
 export * from './entities';
 export * from './errors';
 export * from './repositories';
-export * from './schemas';
+export * from './services';

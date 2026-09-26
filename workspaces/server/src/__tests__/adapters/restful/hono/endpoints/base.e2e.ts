@@ -1,12 +1,12 @@
 import { HonoTest } from '@alphacifer/hono/testing';
 
-import { initHono, type TApp } from '#/adapters/restful/hono';
+import { createApp, type TApp } from '#/adapters/restful/hono';
 
 describe('Base Endpoints', () => {
   let app: TApp;
 
-  beforeAll(async () => {
-    app = (await initHono()).app;
+  beforeAll(() => {
+    app = createApp();
   });
 
   describe('GET /health', () => {

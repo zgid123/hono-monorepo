@@ -1,9 +1,7 @@
-import { UserEntity } from '@domain/auth';
+import { AuthError, UserEntity } from '@domain/auth';
 import { createMiddleware } from 'hono/factory';
 
-import { AuthError } from '#/modules/auth/domain/errors';
-import { auth } from '#/modules/auth/infrastructure/betterAuth/instance';
-
+import { auth } from '../../../../infrastructure/betterAuth/instance';
 import type { IAuthContextVariables } from '../../context';
 
 export const authenticatedUserMiddleware =
@@ -17,11 +15,27 @@ export const authenticatedUserMiddleware =
       return;
     }
 
+    const role = currentSession.user.role;
+
+    if (role !== 'user' && role !== 'admin') {
+      throw new TypeError(`Unsupported user role: ${String(role)}`);
+    }
+
     c.set(
       'currentUser',
       UserEntity.create({
-        ...currentSession.user,
+        role,
+        id: currentSession.user.id,
+        name: currentSession.user.name,
+        email: currentSession.user.email,
+        image: currentSession.user.image ?? null,
+        createdAt: currentSession.user.createdAt,
+        updatedAt: currentSession.user.updatedAt,
+        emailVerified: currentSession.user.emailVerified,
+        banReason: currentSession.user.banReason ?? null,
+        banExpires: currentSession.user.banExpires ?? null,
         displayName: currentSession.user.displayName ?? null,
+        status: currentSession.user.banned ? 'banned' : 'active',
       }),
     );
 
@@ -40,8 +54,12 @@ export const requireUserMiddleware = createMiddleware<IAuthContextVariables>(
 
 export const requireAdminMiddleware = createMiddleware<IAuthContextVariables>(
   async (c, next) => {
-    if (c.var.currentUser?.role !== 'admin') {
+    if (!c.var.currentUser) {
       throw AuthError.unauthorized();
+    }
+
+    if (c.var.currentUser.role !== 'admin') {
+      throw AuthError.insufficientPermissions();
     }
 
     await next();

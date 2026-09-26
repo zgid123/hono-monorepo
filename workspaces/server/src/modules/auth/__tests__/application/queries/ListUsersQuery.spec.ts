@@ -3,32 +3,47 @@ import { drizzle } from '#/infrastructure/drizzle/instance';
 import {
   ListUsersQuery,
   ListUsersQueryHandler,
-} from '../../../application/queries/ListUsersQuery';
+} from '../../../application/queries';
 import { UserRepository } from '../../../infrastructure/drizzle/repositories/UserRepository';
+import type { TUser } from '../../../infrastructure/drizzle/schemas/users';
 import { userFactory } from '../../factories/drizzle/UserFactory';
 
 describe('#ListUsersQueryHandler', () => {
-  suite('when the database has users', () => {
-    it('returns users from the repository', async () => {
-      const user = await userFactory.create();
+  let subject: ListUsersQueryHandler;
+  let user: TUser;
 
-      const handler = new ListUsersQueryHandler({
-        userRepository: new UserRepository({
-          drizzle,
-        }),
-      });
+  beforeEach(async () => {
+    user = await userFactory.create();
 
-      const result = await handler.exec(new ListUsersQuery());
+    subject = new ListUsersQueryHandler({
+      userRepository: new UserRepository({
+        drizzle,
+      }),
+    });
+  });
 
-      expect(result).toContainEqual(
-        expect.objectContaining({
-          id: user.id,
-          role: user.role,
-          name: user.name,
-          email: user.email,
-          displayName: user.displayName,
+  suite('when users exist', () => {
+    it('returns the requested page from the query reader', async () => {
+      const result = await subject.exec(
+        new ListUsersQuery({
+          page: 1,
+          limit: 10,
         }),
       );
+
+      expect(result).toEqual({
+        data: [
+          expect.objectContaining({
+            id: user.id,
+            email: user.email,
+          }),
+        ],
+        metadata: {
+          page: 1,
+          limit: 10,
+          total: 1,
+        },
+      });
     });
   });
 });

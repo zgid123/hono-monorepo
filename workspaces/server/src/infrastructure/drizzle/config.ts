@@ -3,20 +3,12 @@ import {
   type IDrizzle,
   createDrizzle as init,
 } from '@alphacifer/drizzle/factory';
+import { testSchema } from '@alphacifer/drizzle/testing';
 
-import { accounts, accountsRelations } from './schemas/accounts';
-import { sessions, sessionsRelations } from './schemas/sessions';
-import { users, usersRelations } from './schemas/users';
-import { verifications } from './schemas/verifications';
+import { authSchema } from '#/modules/auth/infrastructure/drizzle/schemas';
 
 export const schema = {
-  users,
-  sessions,
-  accounts,
-  verifications,
-  usersRelations,
-  sessionsRelations,
-  accountsRelations,
+  ...authSchema,
 } as const;
 
 export type TDrizzle = IDrizzle<typeof schema>;
@@ -30,10 +22,16 @@ export function createDrizzle({
     return cachedDrizzle;
   }
 
+  const isTest = !!process.env.VITEST_WORKER_ID;
+
+  if (isTest) {
+    process.env.PGOPTIONS = `-c search_path=${testSchema}`;
+  }
+
   cachedDrizzle = init({
     schema,
     client,
-    isTest: !!process.env.VITEST_WORKER_ID,
+    isTest,
   });
 
   return cachedDrizzle;

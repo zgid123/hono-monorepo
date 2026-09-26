@@ -3,10 +3,13 @@
   "version": "0.0.1",
   "type": "module",
   "exports": {
+    "./handlers": "./src/handlers/index.ts",
     "./interfaces": "./src/interfaces/index.ts",
     "./middlewares": "./src/middlewares/index.ts"
   },
   "dependencies": {
-    "hono": "4.12.29"
+    "@alphacifer/hono": "^0.0.7",
+    "@domain/core": "workspace:^",
+    "hono": "4.13.9"
   }
 }

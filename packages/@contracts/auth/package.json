@@ -1,0 +1,19 @@
+{
+  "name": "@contracts/auth",
+  "version": "0.0.1",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@contracts/core": "workspace:^",
+    "@domain/auth": "workspace:^",
+    "@eidora/arktype": "^0.0.3"
+  },
+  "devDependencies": {
+    "@eidora/core": "^0.0.3"
+  }
+}

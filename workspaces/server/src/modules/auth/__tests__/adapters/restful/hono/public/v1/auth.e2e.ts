@@ -2,7 +2,7 @@ import { HonoTest } from '@alphacifer/hono/testing';
 import { faker } from '@faker-js/faker';
 import { makeSignature } from 'better-auth/crypto';
 
-import { initHono, type TApp } from '#/adapters/restful/hono';
+import { createApp, type TApp } from '#/adapters/restful/hono';
 import { env } from '#/infrastructure/common/env';
 
 interface IAuthResponse {
@@ -22,8 +22,8 @@ describe('Public Auth Endpoints', () => {
     return `hono-monorepo.session_token=${token}.${signature}`;
   };
 
-  beforeAll(async () => {
-    app = (await initHono()).app;
+  beforeAll(() => {
+    app = createApp();
 
     honoTest = HonoTest.create(app);
   });
@@ -44,6 +44,25 @@ describe('Public Auth Endpoints', () => {
             email,
           },
         });
+      });
+    });
+
+    suite('when the client supplies a role', () => {
+      it('rejects client role assignment', async () => {
+        const response = await app.request('/api/v1/auth/sign-up/email', {
+          method: 'POST',
+          body: JSON.stringify({
+            role: 'admin',
+            name: 'Untrusted Admin',
+            password,
+            email: faker.internet.email().toLowerCase(),
+          }),
+          headers: {
+            'content-type': 'application/json',
+          },
+        });
+
+        expect(response.status).toEqual(400);
       });
     });
   });
@@ -146,6 +165,26 @@ describe('Public Auth Endpoints', () => {
         expect(response.jsonData).toEqual({
           success: true,
         });
+      });
+    });
+  });
+
+  describe('POST /api/v1/auth/admin/create-user', () => {
+    suite('when an administration endpoint is requested', () => {
+      it('does not expose it through the public auth router', async () => {
+        const response = await app.request('/api/v1/auth/admin/create-user', {
+          method: 'POST',
+          body: JSON.stringify({
+            name: 'Bypass User',
+            email: faker.internet.email().toLowerCase(),
+            password,
+          }),
+          headers: {
+            'content-type': 'application/json',
+          },
+        });
+
+        expect(response.status).toEqual(404);
       });
     });
   });

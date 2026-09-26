@@ -5,3 +5,5 @@ allowBuilds:
   esbuild: false
   lefthook: true
   msw: false
+minimumReleaseAgeExclude:
+  - '@alphacifer/drizzle@0.0.8'

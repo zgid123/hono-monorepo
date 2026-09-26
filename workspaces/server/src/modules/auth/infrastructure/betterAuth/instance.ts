@@ -1,12 +1,15 @@
 import { passwordHash, verifyPassword } from '@alphacifer/authkit/hash';
+import { USER_PASSWORD_MAX_LENGTH } from '@contracts/auth';
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
+import { admin } from 'better-auth/plugins/admin';
 
 import { drizzle } from '#/infrastructure/drizzle/instance';
-import { accounts } from '#/infrastructure/drizzle/schemas/accounts';
-import { sessions } from '#/infrastructure/drizzle/schemas/sessions';
-import { users } from '#/infrastructure/drizzle/schemas/users';
-import { verifications } from '#/infrastructure/drizzle/schemas/verifications';
+
+import { accounts } from '../drizzle/schemas/accounts';
+import { sessions } from '../drizzle/schemas/sessions';
+import { users } from '../drizzle/schemas/users';
+import { verifications } from '../drizzle/schemas/verifications';
 
 export const auth = betterAuth({
   basePath: '/api/v1/auth',
@@ -23,6 +26,7 @@ export const auth = betterAuth({
   }),
   emailAndPassword: {
     enabled: true,
+    maxPasswordLength: USER_PASSWORD_MAX_LENGTH,
     password: {
       hash: (password: string) => {
         return passwordHash({
@@ -39,18 +43,18 @@ export const auth = betterAuth({
   },
   user: {
     additionalFields: {
-      role: {
-        type: ['user', 'admin'],
-        input: false,
-        defaultValue: 'user',
-      },
       displayName: {
         type: 'string',
-        input: false,
         required: false,
       },
     },
   },
+  plugins: [
+    admin({
+      defaultRole: 'user',
+      adminRoles: ['admin'],
+    }),
+  ],
   advanced: {
     cookiePrefix: 'hono-monorepo',
     database: {
