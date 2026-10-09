@@ -1,0 +1,25 @@
+{
+  "skill_name": "principles",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "In a small Node service, two route handlers each format one timestamp with the same two-line expression. A teammate proposes a new shared package for it. Review the proposal and implement only what is needed today.",
+      "expected_output": "Recommend leaving the harmless duplication or a local helper only if it improves present clarity; no new package.",
+      "files": [],
+      "expectations": [
+        "No speculative shared package or configuration is introduced.",
+        "The reason identifies present maintenance cost and existing conventions."
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "A user asks to fix a null crash in one parser function. The repository also has old formatting and naming inconsistencies nearby. Make the fix.",
+      "expected_output": "A narrow null-handling change with appropriate verification and no unrelated refactor.",
+      "files": [],
+      "expectations": [
+        "The null input is handled according to the function contract.",
+        "Unrelated files and style are preserved."
+      ]
+    }
+  ]
+}

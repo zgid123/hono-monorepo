@@ -1,0 +1,27 @@
+{
+  "skill_name": "testing",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Test an HTTP route that creates a book using Hono and Drizzle. Include the test filename, setup, and assertion.",
+      "expected_output": "An E2E test through the route with a real test database and isolated state.",
+      "files": [],
+      "expectations": [
+        "The test file ends in .e2e.ts.",
+        "The route is exercised through its public HTTP interface.",
+        "Internal application modules are not mocked."
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Write a Fishery factory and repository integration test for a Drizzle books table with generated ID and required title and type columns.",
+      "expected_output": "A complete factory with required fields and a real DB integration test, without a cast concealing missing fields.",
+      "files": [],
+      "expectations": [
+        "The factory supplies title and type.",
+        "The generated ID is omitted from the insert.",
+        "The test reads persisted behavior."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,77 @@
+{
+  "version": 1,
+  "skills": {
+    "better-auth-best-practices": {
+      "source": "better-auth/skills",
+      "sourceType": "github",
+      "skillPath": "better-auth/best-practices/SKILL.md",
+      "computedHash": "61ba0ef64ed2e7c424401cc848ca33dd6d790a720c44727717dc0c5cba5fc122"
+    },
+    "better-auth-security-best-practices": {
+      "source": "better-auth/skills",
+      "sourceType": "github",
+      "skillPath": "security/SKILL.md",
+      "computedHash": "7a230edf3a24ce18162cb4379f59b6a19b8d24ca04db530609d0f15cede556dc"
+    },
+    "cqrs": {
+      "source": "zgid123/skills",
+      "sourceType": "github",
+      "skillPath": "skills/cqrs/SKILL.md",
+      "computedHash": "0c0bd9ab15b2b0c757859f85351a4c44049dd4b50120890bfa2a2ad9aac17e48"
+    },
+    "create-auth": {
+      "source": "better-auth/skills",
+      "sourceType": "github",
+      "skillPath": "better-auth/create-auth/SKILL.md",
+      "computedHash": "4e261efac2ae9a2321c4495c846ef97cf239818fc8bd2ab7e92ed1f9d25470f7"
+    },
+    "domain-driven-design": {
+      "source": "zgid123/skills",
+      "sourceType": "github",
+      "skillPath": "skills/domain-driven-design/SKILL.md",
+      "computedHash": "c85a718ac86376eb7dfb94e4a72f24fe8230d9fcb307c8a142457a3b8ccc0bd7"
+    },
+    "email-and-password-best-practices": {
+      "source": "better-auth/skills",
+      "sourceType": "github",
+      "skillPath": "better-auth/emailAndPassword/SKILL.md",
+      "computedHash": "747d7f73bd9e2ec5317b8ef88dc70f97df716d00e3d02de4051feebaa48b062d"
+    },
+    "organization-best-practices": {
+      "source": "better-auth/skills",
+      "sourceType": "github",
+      "skillPath": "better-auth/organization/SKILL.md",
+      "computedHash": "27627eb3a13bd44eff3a5d890f96e7db052b623db90e01684f759abe3e7fe56b"
+    },
+    "principles": {
+      "source": "zgid123/skills",
+      "sourceType": "github",
+      "skillPath": "skills/principles/SKILL.md",
+      "computedHash": "21e311cd2e1be90d8d126f73976b6c8eb1ef8a792b8c5f29d90a3a3fd606da4c"
+    },
+    "react": {
+      "source": "zgid123/skills",
+      "sourceType": "github",
+      "skillPath": "skills/react/SKILL.md",
+      "computedHash": "427c581d58c970c536c9018e2e3e8e944fa4eb644b0f6f5939d3c481a2fe2d3a"
+    },
+    "testing": {
+      "source": "zgid123/skills",
+      "sourceType": "github",
+      "skillPath": "skills/testing/SKILL.md",
+      "computedHash": "dab17fa5af26371e58d9c5a17be4a594126f22552bd7f57008e824ec6bdde919"
+    },
+    "two-factor-authentication-best-practices": {
+      "source": "better-auth/skills",
+      "sourceType": "github",
+      "skillPath": "better-auth/twoFactor/SKILL.md",
+      "computedHash": "a6f720042e5a090909e0d519a6a50a7eb8179553cd5315f0bbad852a6d20dac8"
+    },
+    "typescript": {
+      "source": "zgid123/skills",
+      "sourceType": "github",
+      "skillPath": "skills/typescript/SKILL.md",
+      "computedHash": "d425c6b35a26ba914b953a765157c2762218490bcb19b73e73a63e20efc2789a"
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "skill_name": "domain-driven-design",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Implement cancellation of an order that is allowed only before shipment. The project already has an Order entity and repository. Keep the change focused.",
+      "expected_output": "Put the invariant and transition in the entity; orchestrate loading and saving outside it.",
+      "files": [],
+      "expectations": [
+        "A shipped order cannot be cancelled through the public entity API.",
+        "The repository handles persistence and does not own the rule.",
+        "No unrelated layers are added."
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Create a simple admin CRUD screen for a lookup table with no domain behavior. Decide whether to add aggregates, repositories, and domain events.",
+      "expected_output": "Use a simple service or transaction script following the existing project.",
+      "files": [],
+      "expectations": [
+        "No aggregate or domain event is introduced without a current rule.",
+        "The response follows existing project structure."
+      ]
+    }
+  ]
+}

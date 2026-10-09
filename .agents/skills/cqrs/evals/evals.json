@@ -1,0 +1,27 @@
+{
+  "skill_name": "cqrs",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Add a CancelOrder command and handler in a TypeScript app using @cqrsx/core. Cancellation must call the Order entity method before saving.",
+      "expected_output": "A co-located command and handler with registration and exec dispatch; domain entity owns the rule.",
+      "files": [],
+      "expectations": [
+        "Command and handler are in the same file.",
+        "The handler invokes domain behavior before persistence.",
+        "The command is dispatched with cqrsx.exec."
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "A read endpoint needs a filtered invoice list with its own result shape. Add the query path with @cqrsx/core, leaving the domain model unchanged.",
+      "expected_output": "A Query<TResult> and co-located handler returning a read model, with no domain mutation.",
+      "files": [],
+      "expectations": [
+        "Query and handler are co-located.",
+        "The query extends Query with an explicit result type.",
+        "No domain state is mutated."
+      ]
+    }
+  ]
+}

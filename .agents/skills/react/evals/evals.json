@@ -1,0 +1,27 @@
+{
+  "skill_name": "react",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Build a presentational UserCard component in a React TypeScript feature with name and email props. It belongs only to the users feature.",
+      "expected_output": "A named function export with IUserCardProps, explicit JSX return type, and feature-local placement.",
+      "files": [],
+      "expectations": [
+        "The component uses a function declaration and named export.",
+        "Props use a named IUserCardProps interface.",
+        "The component stays in the users feature."
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "A Next.js page component must be the default export and uses a hook shared by two widgets in the billing feature. Place the files and implement exports.",
+      "expected_output": "Use the required router default export while placing the shared hook in billing/hooks.",
+      "files": [],
+      "expectations": [
+        "The page uses the framework-required default export.",
+        "The shared hook lives in the feature hooks directory.",
+        "Other components use named exports."
+      ]
+    }
+  ]
+}

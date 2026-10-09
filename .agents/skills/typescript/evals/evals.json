@@ -1,0 +1,26 @@
+{
+  "skill_name": "typescript",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Add an exported findUser function to a TypeScript service that accepts a user ID and looks up a repository. Use the local naming rules and write a public API signature.",
+      "expected_output": "A named interface parameter, explicit return type, and first-level destructuring.",
+      "files": [],
+      "expectations": [
+        "The exported function takes one named interface parameter object.",
+        "The parameter is destructured in the function signature, not in the body.",
+        "The public return type is explicit."
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Add a private normalization method and a dependency to an existing TypeScript class in a pnpm workspace. The root already declares the dependency at the required version.",
+      "expected_output": "Use #private syntax and the existing root dependency without another package declaration.",
+      "files": [],
+      "expectations": [
+        "Private class members use # syntax.",
+        "The child manifest does not duplicate the root dependency."
+      ]
+    }
+  ]
+}
