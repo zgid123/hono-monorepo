@@ -1,7 +1,5 @@
 import '#/infrastructure/common/loadEnv';
 
-import { initInfra, startServer } from '#/adapters/restful/hono';
-
-await initInfra();
+import { startServer } from '#/adapters/restful/hono';
 
 await startServer();

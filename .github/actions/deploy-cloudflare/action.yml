@@ -1,0 +1,93 @@
+name: Deploy server to Cloudflare Containers
+
+description: Push a built image and deploy it to Cloudflare Containers.
+
+inputs:
+  image:
+    description: Docker image loaded by the release workflow
+    required: true
+  account-id:
+    description: Cloudflare account ID
+    required: true
+  api-token:
+    description: Cloudflare API token
+    required: true
+  config-path:
+    description: Wrangler JSON config path
+    required: true
+  worker-name:
+    description: Unique Worker name for this service and environment
+    required: true
+  container-class:
+    description: Container class_name whose image should be updated
+    required: true
+
+runs:
+  using: composite
+
+  steps:
+    - name: Prepare Node.js and pnpm
+      uses: ./.github/actions/prepare-nodejs-pnpm
+
+    - name: Install Cloudflare package dependencies
+      id: package
+      shell: bash
+      env:
+        CONFIG_PATH: ${{ inputs.config-path }}
+        WORKER_NAME: ${{ inputs.worker-name }}
+        CONTAINER_CLASS: ${{ inputs.container-class }}
+      run: |
+        set -euo pipefail
+        config_path=$(realpath "$CONFIG_PATH")
+        cloudflare_dir=$(dirname "$config_path")
+        [[ -f "$cloudflare_dir/package.json" ]] || { echo 'Wrangler config must be beside its Cloudflare package.json' >&2; exit 1; }
+        [[ -n "$WORKER_NAME" ]] || { echo 'worker-name is required' >&2; exit 1; }
+        jq -e --arg class "$CONTAINER_CLASS" \
+          '[.containers[] | select(.class_name == $class)] | length == 1' \
+          "$config_path" > /dev/null || { echo 'Expected exactly one matching container class' >&2; exit 1; }
+        package_name=$(jq -er '.name | select(type == "string" and length > 0)' "$cloudflare_dir/package.json")
+        pnpm install --frozen-lockfile --ignore-scripts --filter "${package_name}..."
+        echo "config=$config_path" >> "$GITHUB_OUTPUT"
+        echo "dir=$cloudflare_dir" >> "$GITHUB_OUTPUT"
+
+    - name: Push image and resolve digest
+      id: image
+      shell: bash
+      env:
+        LOCAL_IMAGE: ${{ inputs.image }}
+        CLOUDFLARE_ACCOUNT_ID: ${{ inputs.account-id }}
+        CLOUDFLARE_API_TOKEN: ${{ inputs.api-token }}
+        CLOUDFLARE_DIR: ${{ steps.package.outputs.dir }}
+      run: |
+        set -euo pipefail
+        pnpm --dir "$CLOUDFLARE_DIR" exec wrangler containers push "$LOCAL_IMAGE"
+        image_name=${LOCAL_IMAGE%:*}
+        remote_image="registry.cloudflare.com/$CLOUDFLARE_ACCOUNT_ID/$LOCAL_IMAGE"
+        digest=$(docker manifest inspect -v "$remote_image" | jq -er '.Descriptor.digest')
+        [[ "$digest" =~ ^sha256:[a-f0-9]{64}$ ]] || { echo 'Invalid image digest' >&2; exit 1; }
+        image_uri="registry.cloudflare.com/$CLOUDFLARE_ACCOUNT_ID/$image_name@$digest"
+        echo "uri=$image_uri" >> "$GITHUB_OUTPUT"
+
+    - name: Deploy Worker
+      shell: bash
+      env:
+        CONFIG_PATH: ${{ steps.package.outputs.config }}
+        CLOUDFLARE_DIR: ${{ steps.package.outputs.dir }}
+        CLOUDFLARE_ACCOUNT_ID: ${{ inputs.account-id }}
+        CLOUDFLARE_API_TOKEN: ${{ inputs.api-token }}
+        WORKER_NAME: ${{ inputs.worker-name }}
+        CONTAINER_CLASS: ${{ inputs.container-class }}
+        IMAGE_URI: ${{ steps.image.outputs.uri }}
+      run: |
+        set -euo pipefail
+        config_path="$CONFIG_PATH"
+        temporary_config_base=$(mktemp "$(dirname "$config_path")/.wrangler-release.XXXXXX")
+        temporary_config="$temporary_config_base.json"
+        trap 'rm -f -- "$temporary_config_base" "$temporary_config"' EXIT
+        mv -- "$temporary_config_base" "$temporary_config"
+        jq --arg image "$IMAGE_URI" \
+          --arg name "$WORKER_NAME" \
+          --arg class "$CONTAINER_CLASS" \
+          '.name = $name | (.containers[] | select(.class_name == $class) | .image) = $image' \
+          "$config_path" > "$temporary_config"
+        pnpm --dir "$CLOUDFLARE_DIR" exec wrangler deploy --config "$temporary_config"

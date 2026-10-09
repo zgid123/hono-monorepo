@@ -1,0 +1,12 @@
+{
+  "extends": "@alphacifer/tsconfig/esm",
+  "compilerOptions": {
+    "noEmit": true,
+    "types": [
+      "@cloudflare/workers-types"
+    ]
+  },
+  "include": [
+    "src"
+  ]
+}

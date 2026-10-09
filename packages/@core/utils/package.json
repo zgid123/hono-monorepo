@@ -2,10 +2,23 @@
   "name": "@core/utils",
   "version": "0.0.1",
   "type": "module",
-  "main": "./src/index.ts",
+  "main": "./lib/index.js",
   "types": "./src/index.ts",
+  "files": [
+    "lib"
+  ],
+  "exports": {
+    ".": {
+      "production": {
+        "types": "./lib/index.d.ts",
+        "default": "./lib/index.js"
+      },
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
   "scripts": {
-    "build": "tsc",
+    "build": "tsdown",
     "test": "vitest run"
   }
 }

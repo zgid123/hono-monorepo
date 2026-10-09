@@ -6,12 +6,20 @@ import type { IAuthContextVariables } from '../../context';
 
 export const authenticatedUserMiddleware =
   createMiddleware<IAuthContextVariables>(async (c, next) => {
-    const currentSession = await auth.api.getSession({
+    const { headers, response: currentSession } = await auth.api.getSession({
       headers: c.req.raw.headers,
+      returnHeaders: true,
     });
+
+    for (const cookie of headers.getSetCookie()) {
+      c.header('Set-Cookie', cookie, {
+        append: true,
+      });
+    }
 
     if (!currentSession) {
       await next();
+
       return;
     }
 

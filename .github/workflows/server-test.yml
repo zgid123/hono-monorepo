@@ -4,21 +4,33 @@ on:
   push:
     branches:
       - main
-    paths:
-      - 'packages/@core/api/**'
-      - 'packages/@data/**'
+    paths: &shared_paths
+      - 'packages/@contracts/**'
+      - 'packages/@core/utils/**'
       - 'packages/@domain/**'
       - 'packages/@node/**'
       - 'workspaces/server/**'
+      - 'infrastructures/server/Dockerfile'
+      - 'infrastructures/server/server.conf'
+      - '.dockerignore'
+      - 'vitest.config.ts'
+      - '.github/actions/prepare-nodejs-pnpm/**'
+      - '.github/actions/build-docker-image/**'
+      - '.github/actions/deploy-ec2/**'
+      - 'package.json'
+      - '.github/workflows/server-test.yml'
+      - '.github/workflows/server-deploy.yml'
   pull_request:
     branches:
       - main
-    paths:
-      - 'packages/@core/api/**'
-      - 'packages/@data/**'
-      - 'packages/@domain/**'
-      - 'packages/@node/**'
-      - 'workspaces/server/**'
+    paths: *shared_paths
+
+permissions:
+  contents: read
+
+concurrency:
+  group: server-tests-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   test:
@@ -42,13 +54,13 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7.0.1
 
       - name: Prepare Node.JS and pnpm
         uses: ./.github/actions/prepare-nodejs-pnpm
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
 
       - name: Run tests
         run: pnpm test

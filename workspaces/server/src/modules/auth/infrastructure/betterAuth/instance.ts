@@ -4,6 +4,7 @@ import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { admin } from 'better-auth/plugins/admin';
 
+import { allowedOrigins } from '#/infrastructure/common/env';
 import { drizzle } from '#/infrastructure/drizzle/instance';
 
 import { accounts } from '../drizzle/schemas/accounts';
@@ -13,6 +14,7 @@ import { verifications } from '../drizzle/schemas/verifications';
 
 export const auth = betterAuth({
   basePath: '/api/v1/auth',
+  trustedOrigins: allowedOrigins,
   baseURL: process.env.BETTER_AUTH_URL,
   secret: process.env.BETTER_AUTH_SECRET,
   database: drizzleAdapter(drizzle, {

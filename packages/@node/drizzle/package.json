@@ -2,11 +2,27 @@
   "name": "@node/drizzle",
   "version": "0.0.1",
   "type": "module",
-  "main": "./src/index.ts",
+  "main": "./lib/index.js",
   "types": "./src/index.ts",
+  "exports": {
+    ".": {
+      "production": {
+        "types": "./lib/index.d.ts",
+        "default": "./lib/index.js"
+      },
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "build": "tsdown"
+  },
   "dependencies": {
     "drizzle-orm": "0.45.3",
-    "pg": "8.23.0"
+    "pg": "8.23.1"
   },
   "devDependencies": {
     "@types/pg": "8.23.1",

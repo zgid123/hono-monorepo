@@ -3,13 +3,40 @@
   "version": "0.0.1",
   "type": "module",
   "exports": {
-    "./handlers": "./src/handlers/index.ts",
-    "./interfaces": "./src/interfaces/index.ts",
-    "./middlewares": "./src/middlewares/index.ts"
+    "./handlers": {
+      "production": {
+        "types": "./lib/handlers/index.d.ts",
+        "default": "./lib/handlers/index.js"
+      },
+      "types": "./src/handlers/index.ts",
+      "default": "./src/handlers/index.ts"
+    },
+    "./interfaces": {
+      "production": {
+        "types": "./lib/interfaces/index.d.ts",
+        "default": "./lib/interfaces/index.js"
+      },
+      "types": "./src/interfaces/index.ts",
+      "default": "./src/interfaces/index.ts"
+    },
+    "./middlewares": {
+      "production": {
+        "types": "./lib/middlewares/index.d.ts",
+        "default": "./lib/middlewares/index.js"
+      },
+      "types": "./src/middlewares/index.ts",
+      "default": "./src/middlewares/index.ts"
+    }
+  },
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "build": "tsdown"
   },
   "dependencies": {
     "@alphacifer/hono": "^0.0.7",
     "@domain/core": "workspace:^",
-    "hono": "4.13.9"
+    "hono": "4.13.13"
   }
 }

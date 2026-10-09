@@ -1,0 +1,78 @@
+name: Deploy server
+
+on:
+  workflow_run:
+    workflows:
+      - Run tests
+    types:
+      - completed
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: server-production
+  cancel-in-progress: false
+
+jobs:
+  build:
+    if: >-
+      ${{
+        vars.SERVER_DEPLOY_ENABLED == 'true' &&
+        github.event.workflow_run.conclusion == 'success' &&
+        github.event.workflow_run.event == 'push' &&
+        github.event.workflow_run.head_branch == 'main' &&
+        github.event.workflow_run.head_repository.full_name == github.repository
+      }}
+    runs-on: ubuntu-latest
+    outputs:
+      image: ${{ steps.build.outputs.image }}
+      artifact: ${{ steps.build.outputs.artifact }}
+    steps:
+      - name: Checkout tested commit
+        uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+
+      - name: Build server image
+        id: build
+        uses: ./.github/actions/build-docker-image
+        with:
+          context: .
+          dockerfile: infrastructures/server/Dockerfile
+          image-name: hono-server
+          commit-sha: ${{ github.event.workflow_run.head_sha }}
+
+  release:
+    needs: build
+
+    environment: production
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout deployment actions
+        uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+
+      - name: Download built image
+        uses: actions/download-artifact@v8.0.1
+        with:
+          name: ${{ needs.build.outputs.artifact }}
+          path: ${{ runner.temp }}/server-image
+
+      - name: Release to EC2
+        uses: ./.github/actions/deploy-ec2
+        with:
+          container-name: ${{ vars.EC2_CONTAINER_NAME }}
+          image: ${{ needs.build.outputs.image }}
+          archive: ${{ runner.temp }}/server-image/hono-server.tar.gz
+          environment-file: ${{ vars.EC2_ENVIRONMENT_FILE }}
+          blue-port: ${{ vars.EC2_BLUE_PORT || '3000' }}
+          green-port: ${{ vars.EC2_GREEN_PORT || '3001' }}
+          host: ${{ vars.EC2_HOST }}
+          user: ${{ vars.EC2_USER }}
+          ssh-key: ${{ secrets.EC2_SSH_KEY }}

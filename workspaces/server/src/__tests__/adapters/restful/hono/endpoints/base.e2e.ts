@@ -16,7 +16,7 @@ describe('Base Endpoints', () => {
 
         expect(response.jsonData).toEqual({
           message: 'Ok!',
-          version: '0.0.1',
+          version: 'development',
         });
       });
     });

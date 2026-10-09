@@ -3,21 +3,26 @@
   "type": "module",
   "imports": {
     "#/*": {
-      "development": "./src/*",
-      "default": "./dist/*"
+      "production": "./dist/*",
+      "default": "./src/*"
     }
   },
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "dev": "node --conditions=development --import tsx --watch src/index.ts",
-    "build": "tsc",
-    "start": "node --import tsx dist/index.js",
+    "dev": "tsx --watch src/index.ts",
+    "build": "rimraf dist && tsc -p tsconfig.build.json && tsc-alias -p tsconfig.build.json",
+    "postbuild": "make copy-migrations",
+    "start": "node --conditions=production dist/index.js",
     "test": "vitest run --coverage --coverage.provider=istanbul",
     "migrate:create": "dotenv run -f .env -- drizzle-kit generate",
-    "db:migrate": "dotenv run -f .env -- drizzle-kit migrate",
+    "db:migrate": "tsx src/migrate.ts",
+    "db:migrate:prod": "node --conditions=production dist/migrate.js",
     "db:migrate:test": "dotenv run -f .env.test -- drizzle-kit migrate"
   },
   "dependencies": {
-    "@alphacifer/authkit": "^0.0.2",
+    "@alphacifer/authkit": "^0.0.3",
     "@alphacifer/drizzle": "^0.0.8",
     "@alphacifer/hono": "^0.0.7",
     "@contracts/auth": "workspace:^",
@@ -28,14 +33,14 @@
     "@eidora/arktype": "^0.0.3",
     "@eidora/core": "^0.0.3",
     "@eidora/hono-arktype-middleware": "^0.0.3",
-    "@hono/node-server": "2.1.1",
+    "@hono/node-server": "2.1.3",
     "@hono/standard-validator": "0.4.0",
     "@node/drizzle": "workspace:^",
     "@node/hono": "workspace:^",
-    "better-auth": "1.7.6",
+    "better-auth": "1.7.7",
     "detect-port": "2.1.0",
-    "dotenv": "18.0.4",
-    "hono": "4.13.9"
+    "dotenv": "18.0.5",
+    "hono": "4.13.13"
   },
   "devDependencies": {
     "drizzle-kit": "0.31.11"

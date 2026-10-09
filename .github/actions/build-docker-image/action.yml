@@ -1,0 +1,59 @@
+name: Build Docker image
+
+description: Build one Docker image and upload its archive for the release job.
+
+inputs:
+  context:
+    description: Docker build context
+    required: true
+  dockerfile:
+    description: Dockerfile path
+    required: true
+  image-name:
+    description: Local image name, such as hono-server
+    required: true
+  commit-sha:
+    description: Full SHA of the tested commit
+    required: true
+
+outputs:
+  image:
+    description: Local image reference
+    value: ${{ steps.build.outputs.image }}
+  artifact:
+    description: GitHub artifact containing the compressed Docker archive
+    value: ${{ steps.build.outputs.artifact }}
+
+runs:
+  using: composite
+
+  steps:
+    - name: Build and save image
+      id: build
+      shell: bash
+      env:
+        CONTEXT: ${{ inputs.context }}
+        DOCKERFILE: ${{ inputs.dockerfile }}
+        IMAGE_NAME: ${{ inputs.image-name }}
+        COMMIT_SHA: ${{ inputs.commit-sha }}
+      run: |
+        set -euo pipefail
+        [[ "$COMMIT_SHA" =~ ^[a-f0-9]{40}$ ]] || { echo 'commit-sha must be a full Git SHA' >&2; exit 1; }
+        tag="${COMMIT_SHA:0:7}-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+        image="$IMAGE_NAME:$tag"
+        docker build -f "$DOCKERFILE" \
+          --build-arg "COMMIT_SHA=${COMMIT_SHA:0:7}" -t "$image" "$CONTEXT"
+        docker save "$image" | gzip > "$RUNNER_TEMP/$IMAGE_NAME.tar.gz"
+
+        echo "image=$image" >> "$GITHUB_OUTPUT"
+        echo "artifact=docker-image-${IMAGE_NAME//\//-}" >> "$GITHUB_OUTPUT"
+
+    - name: Upload image archive
+      uses: actions/upload-artifact@v7.0.1
+      with:
+        name: ${{ steps.build.outputs.artifact }}
+        path: ${{ runner.temp }}/${{ inputs.image-name }}.tar.gz
+        overwrite: true
+        compression-level: 0
+        retention-days: 1
+        if-no-files-found: error

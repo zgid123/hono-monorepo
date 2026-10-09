@@ -1,0 +1,240 @@
+name: Deploy server to EC2
+
+description: Copy a built Docker image to EC2 and run it.
+
+inputs:
+  image:
+    description: Exact image reference from the build action
+    required: true
+  container-name:
+    description: Base Docker container name and Nginx upstream snippet name
+    required: true
+  archive:
+    description: Path to the downloaded Docker image archive
+    required: true
+  host:
+    description: EC2 SSH host
+    required: true
+  user:
+    description: EC2 SSH user with Docker access
+    required: true
+  ssh-key:
+    description: SSH private key
+    required: true
+  environment-file:
+    description: Absolute path to the server environment file on EC2
+    required: true
+  blue-port:
+    description: Localhost port for the primary container slot
+    required: false
+    default: '3000'
+  green-port:
+    description: Localhost port for the secondary container slot
+    required: false
+    default: '3001'
+runs:
+  using: composite
+
+  steps:
+    - name: Configure SSH
+      id: ssh
+      shell: bash
+      env:
+        EC2_HOST: ${{ inputs.host }}
+        EC2_USER: ${{ inputs.user }}
+        SSH_KEY: ${{ inputs.ssh-key }}
+        CONTAINER_NAME: ${{ inputs.container-name }}
+      run: |
+        set -euo pipefail
+
+        ssh_dir=$(mktemp -d "$RUNNER_TEMP/deploy-ec2-ssh.XXXXXX")
+        echo "dir=$ssh_dir" >> "$GITHUB_OUTPUT"
+        chmod 700 "$ssh_dir"
+        printf '%s\n' "$SSH_KEY" > "$ssh_dir/key"
+        cat > "$ssh_dir/config" <<EOF
+        Host ec2
+          HostName $EC2_HOST
+          User $EC2_USER
+          IdentityFile $ssh_dir/key
+          StrictHostKeyChecking no
+          BatchMode yes
+        EOF
+        chmod 600 "$ssh_dir/config" "$ssh_dir/key"
+        remote_archive="/tmp/$CONTAINER_NAME-deploy-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-$RANDOM-$RANDOM.tar.gz"
+        echo "archive=$remote_archive" >> "$GITHUB_OUTPUT"
+
+    - name: Copy image to EC2
+      shell: bash
+      env:
+        ARCHIVE: ${{ inputs.archive }}
+        SSH_DIR: ${{ steps.ssh.outputs.dir }}
+        REMOTE_ARCHIVE: ${{ steps.ssh.outputs.archive }}
+      run: |
+        set -euo pipefail
+        scp -F "$SSH_DIR/config" "$ARCHIVE" "ec2:$REMOTE_ARCHIVE"
+
+    - name: Start candidate and switch Nginx upstream
+      id: deploy
+      shell: bash
+      env:
+        SSH_DIR: ${{ steps.ssh.outputs.dir }}
+        CONTAINER_NAME: ${{ inputs.container-name }}
+        IMAGE: ${{ inputs.image }}
+        ENVIRONMENT_FILE: ${{ inputs.environment-file }}
+        BLUE_PORT: ${{ inputs.blue-port }}
+        GREEN_PORT: ${{ inputs.green-port }}
+        REMOTE_ARCHIVE: ${{ steps.ssh.outputs.archive }}
+      run: |
+        set -euo pipefail
+        printf -v remote_args '%q ' "$CONTAINER_NAME" "$IMAGE" "$ENVIRONMENT_FILE" "$BLUE_PORT" "$GREEN_PORT" "$REMOTE_ARCHIVE"
+        ssh -F "$SSH_DIR/config" ec2 "bash -s -- $remote_args" <<'REMOTE'
+        set -euo pipefail
+        container_name=$1
+        image=$2
+        environment_file=$3
+        blue_port=$4
+        green_port=$5
+        remote_archive=$6
+        upstream_file="/etc/nginx/hono-deploy/$container_name/upstream.conf"
+        backup_file=
+        temporary_upstream=
+        candidate_started=false
+        upstream_changed=false
+        reload_attempted=false
+        traffic_switched=false
+
+        restore_upstream() {
+          local restore_temp
+
+          if [[ -z "$backup_file" || ! -f "$backup_file" ]]; then
+            echo 'Cannot restore Nginx upstream: backup is missing' >&2
+            return 1
+          fi
+
+          restore_temp=$(mktemp "${upstream_file}.restore.XXXXXX") || {
+            echo 'Cannot create temporary upstream file' >&2
+            return 1
+          }
+
+          if ! cp "$backup_file" "$restore_temp"; then
+            echo 'Cannot copy the upstream backup' >&2
+            rm -f -- "$restore_temp" || true
+            return 1
+          fi
+
+          if ! mv "$restore_temp" "$upstream_file"; then
+            echo 'Cannot replace the upstream file with its backup' >&2
+            rm -f -- "$restore_temp" || true
+            return 1
+          fi
+
+          return 0
+        }
+
+        cleanup() {
+          local exit_code=$?
+          local rollback_succeeded=true
+
+          trap - EXIT
+
+          if [[ "$upstream_changed" == true && "$traffic_switched" == false ]]; then
+            if ! restore_upstream; then
+              rollback_succeeded=false
+            elif [[ "$reload_attempted" == true ]] && \
+              { ! sudo nginx -t || ! sudo systemctl reload nginx; }; then
+              rollback_succeeded=false
+            fi
+          fi
+
+          if [[ "$candidate_started" == true && "$traffic_switched" == false && "$rollback_succeeded" == true ]]; then
+            docker rm -f "$candidate_name" > /dev/null 2>&1 || true
+          elif [[ "$candidate_started" == true && "$traffic_switched" == false ]]; then
+            echo "Could not confirm Nginx rollback; leaving both $container_name and $candidate_name running" >&2
+          fi
+
+          if [[ -n "$backup_file" && ( "$traffic_switched" == true || "$rollback_succeeded" == true ) ]]; then
+            rm -f -- "$backup_file"
+          fi
+          if [[ -n "$temporary_upstream" ]]; then
+            rm -f -- "$temporary_upstream"
+          fi
+          rm -f -- "$remote_archive" || true
+
+          exit "$exit_code"
+        }
+
+        trap cleanup EXIT
+
+        docker load -i "$remote_archive" > /dev/null
+
+        active_port=$(sed -nE 's/^[[:space:]]*proxy_pass http:\/\/127\.0\.0\.1:([0-9]+);[[:space:]]*$/\1/p' "$upstream_file")
+        if [[ "$active_port" == "$blue_port" ]]; then
+          old_name=$container_name
+          candidate_port=$green_port
+          candidate_name="$container_name-green"
+        elif [[ "$active_port" == "$green_port" ]]; then
+          old_name="$container_name-green"
+          candidate_port=$blue_port
+          candidate_name=$container_name
+        else
+          echo "Nginx upstream does not match a configured container port: $upstream_file" >&2
+          exit 1
+        fi
+
+        docker rm -f "$candidate_name" > /dev/null 2>&1 || true
+        docker run -d --name "$candidate_name" --restart unless-stopped \
+          --env-file "$environment_file" -p "127.0.0.1:$candidate_port:3000" "$image" > /dev/null
+        candidate_started=true
+
+        health_check_url="http://127.0.0.1:$candidate_port/health"
+        healthy=false
+        for attempt in {1..12}; do
+          if curl --fail --silent --show-error --max-time 5 "$health_check_url" > /dev/null; then
+            healthy=true
+            break
+          fi
+          sleep 5
+        done
+        if [[ "$healthy" != true ]]; then
+          echo 'New server slot did not become healthy' >&2
+          docker logs --tail 100 "$candidate_name"
+          exit 1
+        fi
+
+        backup_file=$(mktemp "${upstream_file}.backup.XXXXXX")
+        cp "$upstream_file" "$backup_file"
+        temporary_upstream=$(mktemp "${upstream_file}.XXXXXX")
+        printf 'proxy_pass http://127.0.0.1:%s;\n' "$candidate_port" > "$temporary_upstream"
+        upstream_changed=true
+        mv "$temporary_upstream" "$upstream_file"
+        temporary_upstream=
+
+        if ! sudo nginx -t; then
+          echo 'Nginx configuration check failed; keeping traffic on the previous slot' >&2
+          exit 1
+        fi
+        reload_attempted=true
+        if ! sudo systemctl reload nginx; then
+          echo 'Nginx reload failed; restoring the previous upstream' >&2
+          exit 1
+        fi
+        traffic_switched=true
+
+        if docker container inspect "$old_name" > /dev/null 2>&1; then
+          docker stop --time 30 "$old_name" > /dev/null
+          docker rm "$old_name" > /dev/null
+        fi
+
+        candidate_started=false
+        echo "Serving $image on localhost:$candidate_port"
+        REMOTE
+
+    - name: Remove SSH credentials
+      if: always()
+      shell: bash
+      env:
+        SSH_DIR: ${{ steps.ssh.outputs.dir }}
+      run: |
+        if [[ -n "$SSH_DIR" && -d "$SSH_DIR" ]]; then
+          rm -r -- "$SSH_DIR"
+        fi

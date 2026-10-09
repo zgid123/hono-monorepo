@@ -1,6 +1,3 @@
-import { dirname, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
-import { migrate } from '@alphacifer/drizzle/core';
 import { Cqrsx } from '@cqrsx/core';
 import { type ServerType, serve } from '@hono/node-server';
 import { honoErrorHandler } from '@node/hono/handlers';
@@ -13,9 +10,8 @@ import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import type { ExtractSchema } from 'hono/types';
 
-import { env } from '#/infrastructure/common/env';
+import { allowedOrigins, env } from '#/infrastructure/common/env';
 import { drizzle } from '#/infrastructure/drizzle/instance';
-import { seed as drizzleSeed } from '#/infrastructure/drizzle/seeds';
 
 import type { TContext } from '../context';
 import { wire } from '../wire';
@@ -35,7 +31,7 @@ export function createApp(): TApp {
     .use(
       cors({
         credentials: true,
-        origin: env.ALLOWED_ORIGINS?.split(',') ?? [],
+        origin: allowedOrigins,
       }),
     )
     .use(
@@ -52,31 +48,67 @@ export function createApp(): TApp {
     .onError(honoErrorHandler);
 }
 
-export async function initInfra(): Promise<void> {
-  const migrationsFolder = resolve(
-    dirname(fileURLToPath(import.meta.url)),
-    '../../../infrastructure/drizzle/migrations',
-  );
-
-  await migrate(drizzle, {
-    migrationsFolder,
-    migrationsSchema: 'public',
-    migrationsTable: 'orm_migrations',
-  });
-
-  await drizzleSeed(drizzle);
-}
-
 export async function startServer(): Promise<ServerType> {
   const app = createApp();
+  const port =
+    env.NODE_ENV === 'development' ? await detect(env.PORT) : env.PORT;
 
-  return serve(
+  const server = serve(
     {
+      port,
       fetch: app.fetch,
-      port: await detect(env.PORT),
     },
     ({ port }) => {
       console.log(`Server is running on http://localhost:${port}`);
     },
   );
+
+  let shuttingDown = false;
+
+  async function shutdown(): Promise<void> {
+    if (shuttingDown) {
+      return;
+    }
+
+    shuttingDown = true;
+
+    const timeout = setTimeout(() => {
+      console.error('Server shutdown timed out');
+      process.exit(1);
+    }, 8_000);
+
+    timeout.unref();
+
+    try {
+      try {
+        await new Promise<void>((resolve, reject) => {
+          server.close((error) => {
+            if (error) {
+              reject(error);
+              return;
+            }
+
+            resolve();
+          });
+        });
+      } finally {
+        await drizzle.$client.end();
+      }
+    } catch (error) {
+      console.error('Server shutdown failed:', error);
+      process.exitCode = 1;
+    } finally {
+      clearTimeout(timeout);
+    }
+  }
+
+  process.on('SIGTERM', () => {
+    void shutdown();
+  });
+
+  process.on('SIGINT', () => {
+    void shutdown();
+  });
+
+  return server;
 }

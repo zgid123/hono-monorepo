@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "customConditions": [
+      "production"
+    ]
+  },
+  "exclude": [
+    "dist",
+    "node_modules",
+    "src/**/__tests__"
+  ]
+}

@@ -1,0 +1,16 @@
+.git
+.agents
+.github
+.vscode
+**/node_modules
+.pnpm-store
+/out
+**/.turbo
+**/dist
+**/coverage
+storybook-static
+**/.env
+**/.env.*
+**/*.log
+**/.DS_Store
+workspaces/server/src/certificates/*.pem

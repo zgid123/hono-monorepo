@@ -1,0 +1,90 @@
+name: Deploy server to ECS
+
+description: Push a built image and update an existing ECS service.
+
+inputs:
+  image:
+    description: Docker image loaded by the release workflow
+    required: true
+  aws-region:
+    description: AWS region for ECR and ECS
+    required: true
+  role-arn:
+    description: GitHub OIDC role ARN
+    required: true
+  repository:
+    description: Existing ECR repository name
+    required: true
+  cluster:
+    description: ECS cluster name or ARN
+    required: true
+  service:
+    description: ECS service name
+    required: true
+  container:
+    description: Application container name in the task definition
+    required: true
+
+runs:
+  using: composite
+
+  steps:
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v6.3.0
+      with:
+        aws-region: ${{ inputs.aws-region }}
+        role-to-assume: ${{ inputs.role-arn }}
+
+    - name: Log in to ECR
+      id: ecr
+      uses: aws-actions/amazon-ecr-login@v2.1.7
+
+    - name: Get current task definition
+      id: task
+      shell: bash
+      env:
+        ECS_CLUSTER: ${{ inputs.cluster }}
+        ECS_SERVICE: ${{ inputs.service }}
+      run: |
+        set -euo pipefail
+        current_task=$(aws ecs describe-services --cluster "$ECS_CLUSTER" \
+          --services "$ECS_SERVICE" --query 'services[0].taskDefinition' --output text)
+        if [[ "$current_task" != arn:*:task-definition/*:* ]]; then
+          echo "ECS service '$ECS_SERVICE' was not found or has no task definition in cluster '$ECS_CLUSTER'" >&2
+          exit 1
+        fi
+        echo "arn=$current_task" >> "$GITHUB_OUTPUT"
+
+    - name: Push image to ECR
+      id: image
+      shell: bash
+      env:
+        LOCAL_IMAGE: ${{ inputs.image }}
+        ECR_REPOSITORY: ${{ inputs.repository }}
+        REGISTRY: ${{ steps.ecr.outputs.registry }}
+      run: |
+        set -euo pipefail
+        image_tag=${LOCAL_IMAGE##*:}
+        remote_image="$REGISTRY/$ECR_REPOSITORY:$image_tag"
+        docker tag "$LOCAL_IMAGE" "$remote_image"
+        docker push "$remote_image"
+        digest=$(aws ecr describe-images --repository-name "$ECR_REPOSITORY" \
+          --image-ids "imageTag=$image_tag" --query 'imageDetails[0].imageDigest' --output text)
+        [[ "$digest" =~ ^sha256:[a-f0-9]{64}$ ]] || { echo 'ECR image digest unavailable' >&2; exit 1; }
+        echo "uri=$REGISTRY/$ECR_REPOSITORY@$digest" >> "$GITHUB_OUTPUT"
+
+    - name: Put image in task definition
+      id: render
+      uses: aws-actions/amazon-ecs-render-task-definition@v1.9.0
+      with:
+        task-definition-arn: ${{ steps.task.outputs.arn }}
+        container-name: ${{ inputs.container }}
+        image: ${{ steps.image.outputs.uri }}
+
+    - name: Deploy task definition
+      uses: aws-actions/amazon-ecs-deploy-task-definition@v2.6.3
+      with:
+        task-definition: ${{ steps.render.outputs.task-definition }}
+        service: ${{ inputs.service }}
+        cluster: ${{ inputs.cluster }}
+        wait-for-service-stability: true

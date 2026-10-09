@@ -2,20 +2,31 @@
   "name": "@domain/auth",
   "version": "0.0.1",
   "type": "module",
-  "main": "./src/index.ts",
+  "main": "./lib/index.js",
   "types": "./src/index.ts",
   "exports": {
     ".": {
+      "production": {
+        "types": "./lib/index.d.ts",
+        "default": "./lib/index.js"
+      },
       "types": "./src/index.ts",
-      "import": "./src/index.ts"
+      "default": "./src/index.ts"
     },
     "./constants": {
+      "production": {
+        "types": "./lib/constants/index.d.ts",
+        "default": "./lib/constants/index.js"
+      },
       "types": "./src/constants/index.ts",
-      "import": "./src/constants/index.ts"
+      "default": "./src/constants/index.ts"
     }
   },
+  "files": [
+    "lib"
+  ],
   "scripts": {
-    "build": "tsc",
+    "build": "tsdown",
     "test": "vitest run"
   },
   "dependencies": {
