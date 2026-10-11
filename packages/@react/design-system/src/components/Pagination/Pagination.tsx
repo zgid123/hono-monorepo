@@ -13,11 +13,18 @@ import type { JSX } from 'react';
 import { Select } from '../Select';
 import { createVisiblePaginationItems } from './utils';
 
+export interface IPaginationLabels {
+  next: string;
+  previous: string;
+  rowsPerPage: string;
+}
+
 export interface IPaginationProps {
   page: number;
   pageSize: number;
   totalPages: number;
   className?: string;
+  labels: IPaginationLabels;
   pageSizeOptions?: number[];
   onPageChange: (page: number) => void;
   onPageSizeChange: (pageSize: number) => void;
@@ -25,6 +32,7 @@ export interface IPaginationProps {
 
 export function Pagination({
   page,
+  labels,
   pageSize,
   className,
   totalPages,
@@ -55,9 +63,9 @@ export function Pagination({
           'text-sm font-medium whitespace-nowrap',
         )}
       >
-        <span>Rows per page</span>
+        <span>{labels.rowsPerPage}</span>
         <Select
-          aria-label='Rows per page'
+          ariaLabel={labels.rowsPerPage}
           className={cn('min-w-24')}
           onValueChange={(value) => onPageSizeChange(Number(value))}
           options={pageSizeOptions.map((option) => {
@@ -73,6 +81,7 @@ export function Pagination({
         <PaginationItem>
           <PaginationPrevious
             aria-disabled={isFirstPage}
+            aria-label={labels.previous}
             className={cn(isFirstPage && 'pointer-events-none opacity-50')}
             href='#'
             onClick={(event) => {
@@ -83,6 +92,7 @@ export function Pagination({
               }
             }}
             tabIndex={isFirstPage ? -1 : undefined}
+            text={labels.previous}
           />
         </PaginationItem>
         {paginationItems.map((item) => {
@@ -112,6 +122,7 @@ export function Pagination({
         <PaginationItem>
           <PaginationNext
             aria-disabled={isLastPage}
+            aria-label={labels.next}
             className={cn(isLastPage && 'pointer-events-none opacity-50')}
             href='#'
             onClick={(event) => {
@@ -122,6 +133,7 @@ export function Pagination({
               }
             }}
             tabIndex={isLastPage ? -1 : undefined}
+            text={labels.next}
           />
         </PaginationItem>
       </PaginationContent>

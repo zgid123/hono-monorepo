@@ -21,6 +21,11 @@ function PaginationExample(): JSX.Element {
 
   return (
     <Pagination
+      labels={{
+        next: 'Next',
+        previous: 'Previous',
+        rowsPerPage: 'Rows per page',
+      }}
       onPageChange={setPage}
       onPageSizeChange={(nextPageSize) => {
         setPage(1);
@@ -35,6 +40,11 @@ function PaginationExample(): JSX.Element {
 
 export const Default: TStory = {
   args: {
+    labels: {
+      next: 'Next',
+      previous: 'Previous',
+      rowsPerPage: 'Rows per page',
+    },
     page: 2,
     pageSize: 25,
     totalPages: 12,

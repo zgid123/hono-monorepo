@@ -1,0 +1,24 @@
+{
+  "$schema": "https://inlang.com/schema/inlang-message-format",
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "users": "Users"
+  },
+  "page": {
+    "users": {
+      "title": "Users",
+      "loading": "Loading users...",
+      "loadError": "Unable to load users.",
+      "empty": "No users found."
+    },
+    "notFound": {
+      "title": "Page not found",
+      "content": "The page you are looking for does not exist."
+    },
+    "about": {
+      "title": "A React starter built with React + Vite",
+      "content": "Build your next React application with Vite, type-safe TanStack Router routing, and TanStack Query for data fetching. This starter includes Better Auth sign-in connected to the Hono API, reusable UI components, and English and Vietnamese localization with Paraglide, so you can focus on building your product."
+    }
+  }
+}

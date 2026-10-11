@@ -20,7 +20,7 @@ import {
 } from '@tanstack/react-table';
 import { type JSX, useState } from 'react';
 
-import { Pagination } from '../Pagination';
+import { type IPaginationLabels, Pagination } from '../Pagination';
 
 const dataTableFeatures = tableFeatures({
   columnVisibilityFeature,
@@ -42,6 +42,7 @@ export interface IDataTableProps<TData extends RowData> {
   initialPageSize?: number;
   pageSizeOptions?: number[];
   pagination?: IDataTablePagination;
+  paginationLabels: IPaginationLabels;
   columns: TDataTableColumnDef<TData>[];
   onPageChange?: (page: number) => void;
   onPageSizeChange?: (pageSize: number) => void;
@@ -59,6 +60,7 @@ export function DataTable<TData extends RowData>({
   totalPages,
   onPageChange,
   onPageSizeChange,
+  paginationLabels,
   initialPageSize = 10,
   pagination: controlledPagination,
   emptyMessage = 'No results found.',
@@ -177,6 +179,7 @@ export function DataTable<TData extends RowData>({
       </Table>
       <Pagination
         className={cn('px-4 py-3', 'border-t')}
+        labels={paginationLabels}
         onPageChange={handlePageChange}
         onPageSizeChange={handlePageSizeChange}
         page={pagination.pageIndex + 1}

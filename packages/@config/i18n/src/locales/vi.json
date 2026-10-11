@@ -1,6 +1,11 @@
 {
   "$schema": "https://inlang.com/schema/inlang-message-format",
   "languageLabel": "Ngôn ngữ",
+  "pagy": {
+    "rowsPerPage": "Số dòng mỗi trang",
+    "previous": "Trước",
+    "next": "Tiếp"
+  },
   "themeLabel": "Chế độ giao diện: {mode}. Nhấn để chuyển sang chế độ {nextMode}.",
   "auth": {
     "alreadyHaveAccount": "Đã có tài khoản? Đăng nhập",
@@ -13,7 +18,9 @@
     "model": {
       "email": "Email",
       "name": "Họ tên",
-      "password": "Mật khẩu"
+      "password": "Mật khẩu",
+      "role": "Vai trò",
+      "createdAt": "Ngày tạo"
     },
     "signIn": "Đăng nhập",
     "signInForm": {

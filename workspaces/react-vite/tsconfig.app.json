@@ -1,0 +1,6 @@
+{
+  "extends": "@alphacifer/tsconfig/react-app",
+  "include": [
+    "src"
+  ]
+}

@@ -102,4 +102,4 @@ __unconfig*
 #
 workspaces/server/src/certificates/*.pem
 !packages/@react/shadcn-ui/src/lib
-workspaces/tanstack-start/src/integrations/i18n/.merged
+workspaces/**/src/integrations/i18n/.merged

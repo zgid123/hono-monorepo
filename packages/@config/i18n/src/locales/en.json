@@ -1,6 +1,11 @@
 {
   "$schema": "https://inlang.com/schema/inlang-message-format",
   "languageLabel": "Language",
+  "pagy": {
+    "rowsPerPage": "Rows per page",
+    "previous": "Previous",
+    "next": "Next"
+  },
   "themeLabel": "Theme mode: {mode}. Click to switch to {nextMode} mode.",
   "auth": {
     "alreadyHaveAccount": "Already have an account? Sign in",
@@ -13,7 +18,9 @@
     "model": {
       "email": "Email",
       "name": "Full name",
-      "password": "Password"
+      "password": "Password",
+      "role": "Role",
+      "createdAt": "Created"
     },
     "signIn": "Sign in",
     "signInForm": {

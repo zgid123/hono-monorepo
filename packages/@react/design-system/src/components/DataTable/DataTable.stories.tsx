@@ -50,6 +50,11 @@ const meta: Meta<IDataTableProps<IUserRow>> = {
   args: {
     columns,
     data: users,
+    paginationLabels: {
+      next: 'Next',
+      previous: 'Previous',
+      rowsPerPage: 'Rows per page',
+    },
   },
   component: DataTable,
   parameters: {
@@ -81,6 +86,11 @@ function ServerPaginationExample(): JSX.Element {
       pagination={{
         page,
         pageSize,
+      }}
+      paginationLabels={{
+        next: 'Next',
+        previous: 'Previous',
+        rowsPerPage: 'Rows per page',
       }}
       totalPages={Math.ceil(users.length / pageSize)}
     />

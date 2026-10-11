@@ -1,0 +1,24 @@
+{
+  "$schema": "https://inlang.com/schema/inlang-message-format",
+  "nav": {
+    "home": "Trang chủ",
+    "about": "Giới thiệu",
+    "users": "Người dùng"
+  },
+  "page": {
+    "users": {
+      "title": "Người dùng",
+      "loading": "Đang tải người dùng...",
+      "loadError": "Không thể tải danh sách người dùng.",
+      "empty": "Không tìm thấy người dùng."
+    },
+    "notFound": {
+      "title": "Không tìm thấy trang",
+      "content": "Trang bạn đang tìm kiếm không tồn tại."
+    },
+    "about": {
+      "title": "Bộ khởi tạo ứng dụng React với React + Vite",
+      "content": "Xây dựng ứng dụng React với Vite, định tuyến an toàn kiểu dữ liệu bằng TanStack Router và TanStack Query để truy xuất dữ liệu. Bộ khởi tạo này tích hợp đăng nhập Better Auth kết nối với API Hono, các thành phần giao diện có thể tái sử dụng và bản địa hóa tiếng Việt và tiếng Anh bằng Paraglide, giúp bạn tập trung phát triển sản phẩm."
+    }
+  }
+}
