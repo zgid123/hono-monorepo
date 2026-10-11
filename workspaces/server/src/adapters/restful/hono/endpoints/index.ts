@@ -1,3 +1,4 @@
+import { responseDataMiddleware } from '@node/hono/middlewares';
 import { Hono } from 'hono';
 
 import { authenticatedUserMiddleware } from '#/modules/auth/adapters/restful/hono/middlewares/authMiddlewares';
@@ -9,5 +10,6 @@ import { v1Endpoints } from './v1';
 export const endpoints = new Hono()
   .route('/', baseEndpoints)
   .route('/api/v1', v1Endpoints)
+  .use('*', responseDataMiddleware)
   .use('*', authenticatedUserMiddleware)
   .route('/api/internal', internalEndpoints);

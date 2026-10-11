@@ -7,6 +7,8 @@ import {
   INSUFFICIENT_PERMISSIONS_CODE,
   INSUFFICIENT_PERMISSIONS_MESSAGE,
   INSUFFICIENT_PERMISSIONS_NAME,
+  type TInternalUsersViewModel,
+  type TInternalUserViewModel,
   UNAUTHORIZED_CODE,
   UNAUTHORIZED_MESSAGE,
   UNAUTHORIZED_NAME,
@@ -84,7 +86,11 @@ describe('Internal Users Endpoints', () => {
           },
         });
 
-        expect(response.jsonData.data).toContainEqual(
+        const responseData = response.jsonData as unknown as {
+          data: TInternalUsersViewModel;
+        };
+
+        expect(responseData.data.data).toContainEqual(
           expect.objectContaining({
             id: user.id,
             email: user.email,
@@ -96,16 +102,7 @@ describe('Internal Users Endpoints', () => {
             updatedAt: user.updatedAt.toISOString(),
           }),
         );
-        const responseData = response.jsonData as unknown as {
-          metadata: {
-            page: number;
-            limit: number;
-            total: number;
-            totalPages: number;
-          };
-        };
-
-        expect(responseData.metadata).toEqual(
+        expect(responseData.data.metadata).toEqual(
           expect.objectContaining({
             page: 1,
             limit: 10,
@@ -253,7 +250,13 @@ describe('Internal Users Endpoints', () => {
           },
         );
 
-        expect(response.jsonData.data).toEqual(
+        const responseData = response.jsonData as unknown as {
+          data: {
+            data: TInternalUserViewModel;
+          };
+        };
+
+        expect(responseData.data.data).toEqual(
           expect.objectContaining({
             id: user.id,
             image: user.image,
