@@ -1,2 +1,45 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
+
+@layer base {
+  h1 {
+    @apply text-4xl font-bold tracking-tight text-foreground-primary sm:text-5xl;
+  }
+
+  h2 {
+    @apply text-3xl font-semibold tracking-tight text-foreground-primary;
+  }
+
+  h3 {
+    @apply text-2xl font-semibold tracking-tight text-foreground-primary;
+  }
+
+  h4 {
+    @apply text-xl font-semibold tracking-tight text-foreground-primary;
+  }
+
+  p {
+    @apply text-base leading-7 text-foreground-secondary;
+  }
+}
+
+@theme inline {
+  --font-display: 'Fraunces', Georgia, serif;
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --color-tertiary: var(--tertiary);
+  --color-stroke-primary: var(--stroke-primary);
+  --color-stroke-secondary: var(--stroke-secondary);
+  --color-stroke-tertiary: var(--stroke-tertiary);
+  --color-foreground-primary: var(--foreground-primary);
+  --color-foreground-secondary: var(--foreground-secondary);
+  --color-foreground-tertiary: var(--foreground-tertiary);
+  --color-lagoon: var(--lagoon);
+  --color-lagoon-mid: var(--lagoon-mid);
+  --color-lagoon-deep: var(--lagoon-deep);
+  --color-palm: var(--palm);
+  --color-sand: var(--sand);
+  --color-foam: var(--foam);
+  --color-red: var(--red);
+  --color-amber: var(--amber);
+}

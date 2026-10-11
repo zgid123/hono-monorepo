@@ -15,7 +15,9 @@ export type TInternalUserParams = typeof InternalUserParams.infer;
 
 export const CreateInternalUser = type({
   name: 'string',
-  email: 'string.email',
+  email: type('string.email').configure({
+    message: () => 'auth.issues.email',
+  }),
   password: `string >= 1 & string <= ${USER_PASSWORD_MAX_LENGTH}`,
   'image?': 'string',
   'displayName?': 'string',

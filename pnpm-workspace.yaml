@@ -3,6 +3,7 @@ packages:
   - 'workspaces/**'
   - 'infrastructures/**'
 allowBuilds:
+  '@sentry/cli': false
   esbuild: false
   lefthook: true
   msw: false

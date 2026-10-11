@@ -12,7 +12,7 @@ const meta = {
       },
     },
     variant: {
-      options: ['default', 'gradient'],
+      options: ['default', 'outline', 'ghost'],
       control: {
         type: 'select',
       },
@@ -43,6 +43,22 @@ export const Small: TStory = {
   },
 };
 
+export const Outline: TStory = {
+  args: {
+    size: 'md',
+    variant: 'outline',
+    children: 'Outline Button',
+  },
+};
+
+export const Ghost: TStory = {
+  args: {
+    size: 'md',
+    variant: 'ghost',
+    children: "Don't have an account? Sign up",
+  },
+};
+
 export const Large: TStory = {
   args: {
     size: 'lg',
@@ -54,5 +70,20 @@ export const Disabled: TStory = {
   args: {
     disabled: true,
     children: 'Disabled Button',
+  },
+};
+
+export const Loading: TStory = {
+  args: {
+    isLoading: true,
+    loaderText: 'Creating account...',
+    children: 'Create account',
+  },
+};
+
+export const LoadingWithoutText: TStory = {
+  args: {
+    isLoading: true,
+    children: 'Submit',
   },
 };

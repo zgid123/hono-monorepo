@@ -1,0 +1,17 @@
+{
+  "extends": "@alphacifer/tsconfig/esm",
+  "compilerOptions": {
+    "declaration": true,
+    "outDir": "lib",
+    "types": [
+      "node"
+    ]
+  },
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "lib",
+    "node_modules"
+  ]
+}

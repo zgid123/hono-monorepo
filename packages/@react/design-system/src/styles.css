@@ -1,3 +1,168 @@
 @import '@react/shadcn-ui/globals.css';
 
 @source '../**/*.{ts,tsx}';
+
+:root {
+  --primary: #e7f3ec;
+  --secondary: rgba(255, 255, 255, 0.9);
+  --tertiary: color-mix(in oklab, var(--secondary) 88%, var(--color-white) 12%);
+  --stroke-primary: rgba(23, 58, 64, 0.14);
+  --stroke-secondary: rgba(47, 106, 74, 0.18);
+  --stroke-tertiary: color-mix(
+    in oklab,
+    var(--lagoon-deep) 58%,
+    var(--stroke-primary)
+  );
+  --foreground-primary: #173a40;
+  --foreground-secondary: #416166;
+  --foreground-tertiary: var(--color-gray-600);
+  --lagoon: #4fb8b2;
+  --lagoon-mid: #7ed3bf;
+  --lagoon-deep: #328f97;
+  --palm: #2f6a4a;
+  --sand: #e7f0e8;
+  --foam: #f3faf5;
+  --surface-subtle: rgba(255, 255, 255, 0.74);
+  --surface-header: rgba(251, 255, 248, 0.84);
+  --surface-chip: rgba(255, 255, 255, 0.8);
+  --surface-hover: rgba(255, 255, 255, 0.9);
+  --inset-glint: rgba(255, 255, 255, 0.82);
+  --foreground-kicker: rgba(47, 106, 74, 0.9);
+  --lagoon-glow: rgba(79, 184, 178, 0.36);
+  --palm-glow: rgba(47, 106, 74, 0.2);
+  --link-decoration: rgba(50, 143, 151, 0.4);
+  --lagoon-hover: #246f76;
+  --toggle-shadow: 0 8px 22px color-mix(in oklab, var(--palm) 8%, transparent);
+  --focus-shadow: 0 0 0 3px color-mix(in oklab, var(--lagoon) 24%, transparent);
+  --action-background: color-mix(in oklab, var(--lagoon) 22%, var(--secondary));
+  --action-hover-background: color-mix(
+    in oklab,
+    var(--lagoon) 30%,
+    var(--secondary)
+  );
+  --action-border: color-mix(
+    in oklab,
+    var(--lagoon-deep) 34%,
+    var(--stroke-primary)
+  );
+  --red: #9f3030;
+  --red-surface: rgba(196, 71, 71, 0.1);
+  --red-stroke: rgba(196, 71, 71, 0.28);
+  --red-stroke-strong: rgba(196, 71, 71, 0.3);
+  --amber: #c17e2a;
+  --amber-surface: rgba(193, 126, 42, 0.1);
+  --amber-stroke: rgba(193, 126, 42, 0.3);
+  --code-foreground: #e8efff;
+  --code-surface: #1d2e45;
+  --shadow-palm: color-mix(in oklab, var(--palm) 10%, transparent);
+  --shadow-foreground: color-mix(
+    in oklab,
+    var(--foreground-primary) 8%,
+    transparent
+  );
+  --shadow-foreground-soft: color-mix(
+    in oklab,
+    var(--foreground-primary) 6%,
+    transparent
+  );
+
+  --background: var(--primary);
+  --foreground: var(--foreground-primary);
+  --card: var(--secondary);
+  --card-foreground: var(--foreground-primary);
+  --popover: var(--secondary);
+  --popover-foreground: var(--foreground-primary);
+  --primary-foreground: var(--foreground-primary);
+  --secondary-foreground: var(--foreground-primary);
+  --muted: var(--tertiary);
+  --muted-foreground: var(--foreground-secondary);
+  --accent: var(--tertiary);
+  --accent-foreground: var(--foreground-primary);
+  --destructive: var(--red);
+  --border: var(--stroke-primary);
+  --input: var(--stroke-primary);
+  --ring: var(--stroke-tertiary);
+}
+
+.dark {
+  --primary: #0a1418;
+  --secondary: rgba(15, 27, 31, 0.92);
+  --tertiary: color-mix(in oklab, var(--secondary) 88%, var(--color-white) 12%);
+  --stroke-primary: rgba(141, 229, 219, 0.18);
+  --stroke-secondary: rgba(141, 229, 219, 0.24);
+  --stroke-tertiary: color-mix(
+    in oklab,
+    var(--lagoon-deep) 58%,
+    var(--stroke-primary)
+  );
+  --foreground-primary: #d7ece8;
+  --foreground-secondary: #afcdc8;
+  --foreground-tertiary: var(--color-gray-400);
+  --lagoon: #60d7cf;
+  --lagoon-mid: var(--lagoon-deep);
+  --lagoon-deep: #8de5db;
+  --palm: #6ec89a;
+  --sand: #0f1a1e;
+  --foam: #101d22;
+  --surface-subtle: rgba(16, 30, 34, 0.8);
+  --surface-header: rgba(10, 20, 24, 0.8);
+  --surface-chip: rgba(13, 28, 32, 0.9);
+  --surface-hover: rgba(24, 44, 49, 0.8);
+  --inset-glint: rgba(194, 247, 238, 0.14);
+  --foreground-kicker: #b8efe5;
+  --lagoon-glow: rgba(96, 215, 207, 0.18);
+  --palm-glow: rgba(110, 200, 154, 0.12);
+  --lagoon-hover: #a5eee5;
+  --link-decoration: color-mix(in oklab, var(--lagoon-deep) 40%, transparent);
+  --toggle-shadow: 0 8px 22px color-mix(in oklab, var(--palm) 8%, transparent);
+  --red: #f87171;
+  --red-surface: rgba(248, 113, 113, 0.12);
+  --red-stroke: rgba(248, 113, 113, 0.3);
+  --red-stroke-strong: rgba(248, 113, 113, 0.34);
+  --amber: #fbbf24;
+  --amber-surface: rgba(251, 191, 36, 0.12);
+  --amber-stroke: rgba(251, 191, 36, 0.34);
+  --action-background: color-mix(in oklab, var(--lagoon) 22%, var(--secondary));
+  --action-hover-background: color-mix(
+    in oklab,
+    var(--lagoon) 30%,
+    var(--secondary)
+  );
+  --action-border: color-mix(
+    in oklab,
+    var(--lagoon-deep) 34%,
+    var(--stroke-primary)
+  );
+  --shadow-palm: color-mix(in oklab, var(--palm) 10%, transparent);
+  --shadow-foreground: color-mix(
+    in oklab,
+    var(--foreground-primary) 8%,
+    transparent
+  );
+  --shadow-foreground-soft: color-mix(
+    in oklab,
+    var(--foreground-primary) 6%,
+    transparent
+  );
+
+  --background: var(--primary);
+  --foreground: var(--foreground-primary);
+  --card: var(--secondary);
+  --card-foreground: var(--foreground-primary);
+  --popover: var(--secondary);
+  --popover-foreground: var(--foreground-primary);
+  --primary-foreground: var(--foreground-primary);
+  --secondary-foreground: var(--foreground-primary);
+  --muted: var(--tertiary);
+  --muted-foreground: var(--foreground-secondary);
+  --accent: var(--tertiary);
+  --accent-foreground: var(--foreground-primary);
+  --destructive: var(--red);
+  --border: var(--stroke-primary);
+  --input: var(--stroke-primary);
+  --ring: var(--stroke-tertiary);
+}
+
+@theme inline {
+  --font-sans: 'Manrope', ui-sans-serif, system-ui, sans-serif;
+}

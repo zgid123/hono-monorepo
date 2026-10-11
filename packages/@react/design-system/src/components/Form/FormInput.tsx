@@ -1,7 +1,7 @@
-import { Input } from '@react/shadcn-ui/components/input';
 import { cn } from '@react/shadcn-ui/lib/utils';
 import type { ComponentProps, JSX } from 'react';
 
+import { Input } from '../Input';
 import { FormWrapper, type IFormWrapperProps } from './FormWrapper';
 
 export interface IFormInputProps
@@ -11,11 +11,12 @@ export interface IFormInputProps
       'name' | 'state' | 'onChange' | 'label'
     > {
   name: string;
-  containerClassName?: string;
+  fieldClassName?: string;
   onChange: (value: string) => void;
 }
 
 export function FormInput({
+  m,
   name,
   state,
   label,
@@ -23,17 +24,18 @@ export function FormInput({
   onChange,
   className,
   helperText,
-  containerClassName,
+  fieldClassName,
   ...rest
 }: IFormInputProps): JSX.Element {
   const isInvalid = state.meta.isTouched && state.meta.errors.length > 0;
 
   return (
     <FormWrapper
-      className={cn('flex flex-col gap-2', containerClassName)}
+      className={cn('flex flex-col gap-2', fieldClassName)}
       helperText={helperText}
       htmlFor={name}
       label={label}
+      m={m}
       state={state}
     >
       <Input

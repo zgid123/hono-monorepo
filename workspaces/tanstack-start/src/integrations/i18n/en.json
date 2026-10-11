@@ -1,0 +1,17 @@
+{
+  "$schema": "https://inlang.com/schema/inlang-message-format",
+  "nav": {
+    "home": "Home",
+    "about": "About"
+  },
+  "page": {
+    "notFound": {
+      "title": "Page not found",
+      "content": "The page you are looking for does not exist."
+    },
+    "about": {
+      "title": "A React starter built with TanStack Start",
+      "content": "Build your next React application with TanStack Start, type-safe routing, and TanStack Query for data fetching. This starter includes Better Auth sign-in connected to the Hono API, reusable UI components, English and Vietnamese localization with Paraglide, and Sentry monitoring, so you can focus on building your product."
+    }
+  }
+}

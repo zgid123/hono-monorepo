@@ -40,3 +40,11 @@ Run the narrowest relevant verification for a change. Package-level tests use `p
 - `workspaces/server/README.md` for local server setup and migrations.
 - `docs/guides/deployment.md` and `docs/guides/nginx.md` for deployment.
 - `docs/bruno/` for API request examples.
+
+## Class grouping
+
+- Use the existing `cn()` utility to group or combine classes in JSX `className`, class props, component variants, and stories. In the design system, import it from `@react/shadcn-ui/lib/utils`.
+- Pass forwarded class props directly when no classes are added; do not wrap them in redundant calls such as `cn(className)`.
+- Group utility classes by purpose in separate string arguments: layout and spacing, borders, backgrounds, typography, transitions, and interaction states. Keep related state variants together.
+- Nested `cn()` calls are allowed for conditional groups. Use separate string arguments in one `cn()` for unconditional groups.
+- Keep caller-provided class overrides last and preserve existing styling when regrouping classes.
