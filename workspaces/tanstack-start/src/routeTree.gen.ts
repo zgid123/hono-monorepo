@@ -12,6 +12,8 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as InternalRouteRouteImport } from './routes/internal/route'
+import { Route as InternalUsersRouteImport } from './routes/internal/users'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -28,33 +30,50 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const InternalRouteRoute = InternalRouteRouteImport.update({
+  id: '/internal',
+  path: '/internal',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InternalUsersRoute = InternalUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => InternalRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/internal': typeof InternalRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
+  '/internal/users': typeof InternalUsersRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/internal': typeof InternalRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
+  '/internal/users': typeof InternalUsersRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/internal': typeof InternalRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
+  '/internal/users': typeof InternalUsersRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/auth'
+  fullPaths: '/' | '/internal' | '/about' | '/auth' | '/internal/users'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/auth'
-  id: '__root__' | '/' | '/about' | '/auth'
+  to: '/' | '/internal' | '/about' | '/auth' | '/internal/users'
+  id: '__root__' | '/' | '/internal' | '/about' | '/auth' | '/internal/users'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  InternalRouteRoute: typeof InternalRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
   AuthRoute: typeof AuthRoute
 }
@@ -82,11 +101,38 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/internal': {
+      id: '/internal'
+      path: '/internal'
+      fullPath: '/internal'
+      preLoaderRoute: typeof InternalRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/internal/users': {
+      id: '/internal/users'
+      path: '/users'
+      fullPath: '/internal/users'
+      preLoaderRoute: typeof InternalUsersRouteImport
+      parentRoute: typeof InternalRouteRoute
+    }
   }
 }
 
+interface InternalRouteRouteChildren {
+  InternalUsersRoute: typeof InternalUsersRoute
+}
+
+const InternalRouteRouteChildren: InternalRouteRouteChildren = {
+  InternalUsersRoute: InternalUsersRoute,
+}
+
+const InternalRouteRouteWithChildren = InternalRouteRoute._addFileChildren(
+  InternalRouteRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  InternalRouteRoute: InternalRouteRouteWithChildren,
   AboutRoute: AboutRoute,
   AuthRoute: AuthRoute,
 }

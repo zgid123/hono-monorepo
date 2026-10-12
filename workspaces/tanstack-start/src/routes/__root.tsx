@@ -10,6 +10,7 @@ import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools';
 import type { JSX, ReactNode } from 'react';
 
 import { NotFound } from '#/components';
+import { getSession } from '#/integrations/betterAuth/getSession';
 import { getLocale } from '#/integrations/i18n/paraglide/runtime';
 import { BasicLayout } from '#/layouts';
 
@@ -27,6 +28,15 @@ export const Route = createRootRouteWithContext<IMyRouterContext>()({
     if (typeof document !== 'undefined') {
       document.documentElement.setAttribute('lang', getLocale());
     }
+
+    return {
+      session: await getSession(),
+    };
+  },
+  headers: () => {
+    return {
+      'Cache-Control': 'private, no-store',
+    };
   },
   head: () => {
     return {

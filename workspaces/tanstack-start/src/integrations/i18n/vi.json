@@ -2,7 +2,8 @@
   "$schema": "https://inlang.com/schema/inlang-message-format",
   "nav": {
     "home": "Trang chủ",
-    "about": "Giới thiệu"
+    "about": "Giới thiệu",
+    "users": "Người dùng"
   },
   "page": {
     "notFound": {
@@ -12,6 +13,12 @@
     "about": {
       "title": "Bộ khởi tạo ứng dụng React với TanStack Start",
       "content": "Xây dựng ứng dụng React với TanStack Start, định tuyến an toàn kiểu dữ liệu và TanStack Query để truy xuất dữ liệu. Bộ khởi tạo này tích hợp đăng nhập Better Auth kết nối với API Hono, các thành phần giao diện có thể tái sử dụng, bản địa hóa tiếng Việt và tiếng Anh bằng Paraglide cùng tính năng giám sát qua Sentry, giúp bạn tập trung phát triển sản phẩm."
+    },
+    "users": {
+      "title": "Người dùng",
+      "loading": "Đang tải người dùng...",
+      "loadError": "Không thể tải danh sách người dùng.",
+      "empty": "Không tìm thấy người dùng."
     }
   }
 }

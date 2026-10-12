@@ -15,6 +15,7 @@
   "dependencies": {
     "@config/i18n": "workspace:^",
     "@contracts/auth": "workspace:^",
+    "@core/utils": "workspace:*",
     "@react/design-system": "workspace:^",
     "@sentry/tanstackstart-react": "11.6.0",
     "@tanstack/match-sorter-utils": "9.2.6",

@@ -1,34 +1,39 @@
-import { Button } from '@react/design-system/components';
-import { Link } from '@tanstack/react-router';
+import { Avatar, Button } from '@react/design-system/components';
+import { cn } from '@react/design-system/utils';
+import { useQueryClient } from '@tanstack/react-query';
+import { Link, useRouter } from '@tanstack/react-router';
 import type { JSX } from 'react';
 
 import { authClient } from '#/integrations/betterAuth/authClient';
+import { useAuthSession } from '#/integrations/betterAuth/useAuthSession';
 import { m } from '#/integrations/i18n/paraglide/messages';
 
 export function AuthControls(): JSX.Element {
-  const { data: session, isPending } = authClient.useSession();
-
-  if (isPending) {
-    return (
-      <div className='h-8 w-8 bg-neutral-100 dark:bg-neutral-800 animate-pulse' />
-    );
-  }
+  const session = useAuthSession();
+  const router = useRouter();
+  const queryClient = useQueryClient();
 
   if (session?.user) {
     return (
-      <div className='flex items-center gap-2'>
-        {session.user.image ? (
-          <img alt='' className='h-8 w-8' src={session.user.image} />
-        ) : (
-          <div className='h-8 w-8 bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center'>
-            <span className='text-xs font-medium text-neutral-600 dark:text-neutral-400'>
-              {session.user.name?.charAt(0).toUpperCase() || 'U'}
-            </span>
-          </div>
-        )}
+      <div className={cn('flex items-center gap-2')}>
+        <Avatar name={session.user.name} src={session.user.image} />
         <Button
-          onClick={() => {
-            void authClient.signOut();
+          onClick={async () => {
+            const { error } = await authClient.signOut();
+
+            if (error) {
+              return;
+            }
+
+            await queryClient.cancelQueries({
+              queryKey: ['users'],
+            });
+
+            queryClient.removeQueries({
+              queryKey: ['users'],
+            });
+
+            await router.invalidate();
           }}
           type='button'
           variant='outline'

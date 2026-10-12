@@ -591,6 +591,9 @@ importers:
       '@contracts/auth':
         specifier: workspace:^
         version: link:../../packages/@contracts/auth
+      '@core/utils':
+        specifier: workspace:*
+        version: link:../../packages/@core/utils
       '@react/design-system':
         specifier: workspace:^
         version: link:../../packages/@react/design-system
@@ -655,6 +658,8 @@ importers:
       '@vitejs/plugin-react':
         specifier: 6.1.2
         version: 6.1.2(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1))
+
+  workspaces/tanstack-start/src/integrations/i18n/paraglide/messages: {}
 
 packages:
 

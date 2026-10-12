@@ -4,12 +4,14 @@ import type { JSX } from 'react';
 
 import { NavLink } from '#/components';
 import { AuthControls } from '#/features/auth/components';
+import { authClient } from '#/integrations/betterAuth/authClient';
 import { useLocale } from '#/integrations/i18n/LocaleProvider';
 import { m } from '#/integrations/i18n/paraglide/messages';
 import { locales } from '#/integrations/i18n/paraglide/runtime';
 
 export function Header(): JSX.Element {
   const { locale, changeLocale } = useLocale();
+  const { data: session, isPending } = authClient.useSession();
 
   return (
     <header
@@ -40,7 +42,9 @@ export function Header(): JSX.Element {
             'text-sm font-semibold',
           )}
         >
-          <NavLink to='/internal/users'>{m['nav.users']()}</NavLink>
+          {!isPending && session?.user.role === 'admin' && (
+            <NavLink to='/internal/users'>{m['nav.users']()}</NavLink>
+          )}
         </div>
         <div
           className={cn(

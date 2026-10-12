@@ -1,4 +1,4 @@
-import { Button } from '@react/design-system/components';
+import { Avatar, Button } from '@react/design-system/components';
 import { cn } from '@react/design-system/utils';
 import { Link } from '@tanstack/react-router';
 import type { JSX } from 'react';
@@ -27,24 +27,7 @@ export function AuthControls(): JSX.Element {
   if (session?.user) {
     return (
       <div className={cn('flex items-center gap-2')}>
-        {session.user.image ? (
-          <img alt='' className={cn('h-8 w-8')} src={session.user.image} />
-        ) : (
-          <div
-            className={cn(
-              'flex h-8 w-8 items-center justify-center',
-              'bg-neutral-100 dark:bg-neutral-800',
-            )}
-          >
-            <span
-              className={cn(
-                'text-xs font-medium text-neutral-600 dark:text-neutral-400',
-              )}
-            >
-              {session.user.name?.charAt(0).toUpperCase() || 'U'}
-            </span>
-          </div>
-        )}
+        <Avatar name={session.user.name} src={session.user.image} />
         <Button
           onClick={() => {
             void authClient.signOut();

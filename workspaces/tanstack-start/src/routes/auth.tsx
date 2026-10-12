@@ -2,7 +2,6 @@ import { createFileRoute, redirect } from '@tanstack/react-router';
 import type { JSX } from 'react';
 
 import { AuthFormWidget } from '#/features/auth/widgets';
-import { isSignedIn } from '#/integrations/betterAuth/isSignedIn';
 
 export interface IAuthSearch {
   mode?: 'signUp';
@@ -14,8 +13,8 @@ export const Route = createFileRoute('/auth')({
       mode: search.mode === 'signUp' ? 'signUp' : undefined,
     };
   },
-  beforeLoad: async () => {
-    if (await isSignedIn()) {
+  beforeLoad: ({ context }) => {
+    if (context.session?.user) {
       throw redirect({
         to: '/',
         replace: true,
