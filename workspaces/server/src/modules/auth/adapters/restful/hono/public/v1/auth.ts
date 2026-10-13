@@ -1,5 +1,5 @@
 import { arkValidator } from '@alphacifer/hono/arktype-validator';
-import { SignIn, SignUp } from '@contracts/auth';
+import { SignInSchema, SignUpSchema } from '@contracts/auth';
 import type { Context, Handler } from 'hono';
 import { Hono } from 'hono';
 
@@ -22,10 +22,10 @@ const forward: Handler<IAuthContextVariables> = (c) => {
 };
 
 export const authEndpoints = new Hono<IAuthContextVariables>()
-  .post('/sign-in/email', arkValidator('json', SignIn), (c) => {
+  .post('/sign-in/email', arkValidator('json', SignInSchema), (c) => {
     return auth.handler(createValidatedRequest(c, c.req.valid('json')));
   })
-  .post('/sign-up/email', arkValidator('json', SignUp), (c) => {
+  .post('/sign-up/email', arkValidator('json', SignUpSchema), (c) => {
     return auth.handler(createValidatedRequest(c, c.req.valid('json')));
   })
   .post('/sign-out', forward)

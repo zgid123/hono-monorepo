@@ -1,6 +1,6 @@
 import { type } from 'arktype';
 
-const Credentials = type({
+const CredentialsSchema = type({
   email: type('string.email').configure({
     message: () => 'auth.issues.email',
   }),
@@ -14,11 +14,11 @@ const Credentials = type({
   'required',
 );
 
-export const SignIn = Credentials.onUndeclaredKey('reject');
+export const SignInSchema = CredentialsSchema.onUndeclaredKey('reject');
 
-export type TSignIn = typeof SignIn.infer;
+export type TSignIn = typeof SignInSchema.infer;
 
-export const SignUp = Credentials.and({
+export const SignUpSchema = CredentialsSchema.and({
   name: type('string').configure({
     message: () => 'auth.issues.name',
   }),
@@ -32,4 +32,4 @@ export const SignUp = Credentials.and({
   )
   .onUndeclaredKey('reject');
 
-export type TSignUp = typeof SignUp.infer;
+export type TSignUp = typeof SignUpSchema.infer;

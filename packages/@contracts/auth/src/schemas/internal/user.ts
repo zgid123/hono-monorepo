@@ -1,19 +1,19 @@
 import { type } from 'arktype';
 
-export const Role = type("'user' | 'admin'");
-export const UserStatus = type("'active' | 'banned'");
+export const RoleSchema = type("'user' | 'admin'");
+export const UserStatusSchema = type("'active' | 'banned'");
 export const USER_PASSWORD_MAX_LENGTH = 128;
 
-export type TRole = typeof Role.infer;
-export type TUserStatus = typeof UserStatus.infer;
+export type TRole = typeof RoleSchema.infer;
+export type TUserStatus = typeof UserStatusSchema.infer;
 
-export const InternalUserParams = type({
+export const InternalUserParamsSchema = type({
   userId: 'string.uuid',
 }).onUndeclaredKey('reject');
 
-export type TInternalUserParams = typeof InternalUserParams.infer;
+export type TInternalUserParams = typeof InternalUserParamsSchema.infer;
 
-export const CreateInternalUser = type({
+export const CreateInternalUserSchema = type({
   name: 'string',
   email: type('string.email').configure({
     message: () => 'auth.issues.email',
@@ -23,24 +23,26 @@ export const CreateInternalUser = type({
   'displayName?': 'string',
 }).onUndeclaredKey('reject');
 
-export type TCreateInternalUser = typeof CreateInternalUser.infer;
+export type TCreateInternalUser = typeof CreateInternalUserSchema.infer;
 
-export const UpdateInternalUserProfile = type({
+export const UpdateInternalUserProfileSchema = type({
   'name?': 'string',
   'image?': 'string | null',
   'displayName?': 'string | null',
 }).onUndeclaredKey('reject');
 
-export type TUpdateInternalUserProfile = typeof UpdateInternalUserProfile.infer;
+export type TUpdateInternalUserProfile =
+  typeof UpdateInternalUserProfileSchema.infer;
 
-export const ChangeInternalUserRole = type({
-  role: Role,
+export const ChangeInternalUserRoleSchema = type({
+  role: RoleSchema,
 }).onUndeclaredKey('reject');
 
-export type TChangeInternalUserRole = typeof ChangeInternalUserRole.infer;
+export type TChangeInternalUserRole = typeof ChangeInternalUserRoleSchema.infer;
 
-export const ChangeInternalUserStatus = type({
-  status: UserStatus,
+export const ChangeInternalUserStatusSchema = type({
+  status: UserStatusSchema,
 }).onUndeclaredKey('reject');
 
-export type TChangeInternalUserStatus = typeof ChangeInternalUserStatus.infer;
+export type TChangeInternalUserStatus =
+  typeof ChangeInternalUserStatusSchema.infer;

@@ -1,12 +1,12 @@
 import {
-  ChangeInternalUserRole,
-  ChangeInternalUserStatus,
-  CreateInternalUser,
-  InternalUserParams,
-  UpdateInternalUserProfile,
+  ChangeInternalUserRoleSchema,
+  ChangeInternalUserStatusSchema,
+  CreateInternalUserSchema,
+  InternalUserParamsSchema,
+  UpdateInternalUserProfileSchema,
 } from '../../schemas';
 
-describe('#CreateInternalUser', () => {
+describe('#CreateInternalUserSchema', () => {
   suite('when create-user input is valid', () => {
     it('returns the validated payload', () => {
       const payload = {
@@ -16,13 +16,13 @@ describe('#CreateInternalUser', () => {
         displayName: 'Alphacifer',
       };
 
-      expect(CreateInternalUser(payload)).toEqual(payload);
+      expect(CreateInternalUserSchema(payload)).toEqual(payload);
     });
   });
 
   suite('when the password is empty', () => {
     it('rejects the payload', () => {
-      const result = CreateInternalUser({
+      const result = CreateInternalUserSchema({
         name: 'Alpha',
         email: 'alpha@example.com',
         password: '',
@@ -34,7 +34,7 @@ describe('#CreateInternalUser', () => {
 
   suite('when the password exceeds Better Auth maximum length', () => {
     it('rejects the payload', () => {
-      const result = CreateInternalUser({
+      const result = CreateInternalUserSchema({
         name: 'Alpha',
         email: 'alpha@example.com',
         password: 'x'.repeat(129),
@@ -47,7 +47,7 @@ describe('#CreateInternalUser', () => {
   });
 });
 
-describe('#UpdateInternalUserProfile', () => {
+describe('#UpdateInternalUserProfileSchema', () => {
   suite('when update-profile input is valid', () => {
     it('returns the validated payload', () => {
       const payload = {
@@ -55,43 +55,43 @@ describe('#UpdateInternalUserProfile', () => {
         displayName: 'Alphacifer',
       };
 
-      expect(UpdateInternalUserProfile(payload)).toEqual(payload);
+      expect(UpdateInternalUserProfileSchema(payload)).toEqual(payload);
     });
   });
 });
 
-describe('#ChangeInternalUserRole', () => {
+describe('#ChangeInternalUserRoleSchema', () => {
   suite('when change-role input is valid', () => {
     it('returns the validated payload', () => {
       const payload = {
         role: 'admin' as const,
       };
 
-      expect(ChangeInternalUserRole(payload)).toEqual(payload);
+      expect(ChangeInternalUserRoleSchema(payload)).toEqual(payload);
     });
   });
 });
 
-describe('#ChangeInternalUserStatus', () => {
+describe('#ChangeInternalUserStatusSchema', () => {
   suite('when change-status input is valid', () => {
     it('returns the validated payload', () => {
       const payload = {
         status: 'banned' as const,
       };
 
-      expect(ChangeInternalUserStatus(payload)).toEqual(payload);
+      expect(ChangeInternalUserStatusSchema(payload)).toEqual(payload);
     });
   });
 });
 
-describe('#InternalUserParams', () => {
+describe('#InternalUserParamsSchema', () => {
   suite('when the user id is a UUID', () => {
     it('returns the validated parameter', () => {
       const params = {
         userId: '019c820f-5a60-7000-8000-000000000001',
       };
 
-      expect(InternalUserParams(params)).toEqual(params);
+      expect(InternalUserParamsSchema(params)).toEqual(params);
     });
   });
 });

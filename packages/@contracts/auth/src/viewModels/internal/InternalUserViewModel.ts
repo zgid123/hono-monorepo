@@ -1,12 +1,12 @@
 import { createSchema } from '@eidora/arktype';
 import { type } from 'arktype';
 
-import { Role, UserStatus } from '../../schemas';
+import { RoleSchema, UserStatusSchema } from '../../schemas';
 
 const internalUserViewModel = type({
   id: 'string',
-  role: Role,
-  status: UserStatus,
+  role: RoleSchema,
+  status: UserStatusSchema,
   name: 'string',
   email: 'string.email',
   image: 'string | null',

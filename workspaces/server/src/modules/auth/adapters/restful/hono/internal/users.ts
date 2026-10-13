@@ -1,12 +1,12 @@
 import { arkValidator } from '@alphacifer/hono/arktype-validator';
 import { HonoCommonError } from '@alphacifer/hono/core';
 import {
-  ChangeInternalUserRole,
-  ChangeInternalUserStatus,
-  CreateInternalUser,
-  InternalUserParams,
+  ChangeInternalUserRoleSchema,
+  ChangeInternalUserStatusSchema,
+  CreateInternalUserSchema,
+  InternalUserParamsSchema,
   InternalUserViewModel,
-  UpdateInternalUserProfile,
+  UpdateInternalUserProfileSchema,
 } from '@contracts/auth';
 import { resolvePagy } from '@core/utils';
 import { serialize } from '@eidora/hono-arktype-middleware';
@@ -46,7 +46,7 @@ export const usersEndpoint = new Hono<IAuthenticatedContextVariables>()
       200,
     );
   })
-  .post('/', arkValidator('json', CreateInternalUser), async (c) => {
+  .post('/', arkValidator('json', CreateInternalUserSchema), async (c) => {
     const body = c.req.valid('json');
 
     await c.var.cqrsx.exec(
@@ -63,7 +63,7 @@ export const usersEndpoint = new Hono<IAuthenticatedContextVariables>()
   })
   .get(
     '/:userId',
-    arkValidator('param', InternalUserParams),
+    arkValidator('param', InternalUserParamsSchema),
     serialize(InternalUserViewModel),
     async (c) => {
       const { userId } = c.req.valid('param');
@@ -83,8 +83,8 @@ export const usersEndpoint = new Hono<IAuthenticatedContextVariables>()
   )
   .patch(
     '/:userId',
-    arkValidator('param', InternalUserParams),
-    arkValidator('json', UpdateInternalUserProfile),
+    arkValidator('param', InternalUserParamsSchema),
+    arkValidator('json', UpdateInternalUserProfileSchema),
     async (c) => {
       const body = c.req.valid('json');
       const { userId } = c.req.valid('param');
@@ -109,8 +109,8 @@ export const usersEndpoint = new Hono<IAuthenticatedContextVariables>()
   )
   .patch(
     '/:userId/role',
-    arkValidator('param', InternalUserParams),
-    arkValidator('json', ChangeInternalUserRole),
+    arkValidator('param', InternalUserParamsSchema),
+    arkValidator('json', ChangeInternalUserRoleSchema),
     async (c) => {
       const { role } = c.req.valid('json');
       const { userId } = c.req.valid('param');
@@ -127,8 +127,8 @@ export const usersEndpoint = new Hono<IAuthenticatedContextVariables>()
   )
   .patch(
     '/:userId/status',
-    arkValidator('param', InternalUserParams),
-    arkValidator('json', ChangeInternalUserStatus),
+    arkValidator('param', InternalUserParamsSchema),
+    arkValidator('json', ChangeInternalUserStatusSchema),
     async (c) => {
       const { status } = c.req.valid('json');
       const { userId } = c.req.valid('param');

@@ -1,14 +1,18 @@
-import { CreateInternalUser, SignIn, SignUp } from '../../schemas';
+import {
+  CreateInternalUserSchema,
+  SignInSchema,
+  SignUpSchema,
+} from '../../schemas';
 
 describe.each([
   {
-    name: 'SignIn',
-    schema: SignIn,
+    name: 'SignInSchema',
+    schema: SignInSchema,
     fields: ['email', 'password'],
   },
   {
-    name: 'SignUp',
-    schema: SignUp,
+    name: 'SignUpSchema',
+    schema: SignUpSchema,
     fields: ['email', 'name', 'password'],
   },
 ])('#$name missing fields', ({ schema, fields }) => {
@@ -37,20 +41,20 @@ describe.each([
 
 describe.each([
   {
-    name: 'SignIn',
-    schema: SignIn,
+    name: 'SignInSchema',
+    schema: SignInSchema,
     fields: {},
   },
   {
-    name: 'SignUp',
-    schema: SignUp,
+    name: 'SignUpSchema',
+    schema: SignUpSchema,
     fields: {
       name: 'Alpha',
     },
   },
   {
-    name: 'CreateInternalUser',
-    schema: CreateInternalUser,
+    name: 'CreateInternalUserSchema',
+    schema: CreateInternalUserSchema,
     fields: {
       name: 'Alpha',
     },
@@ -79,7 +83,7 @@ describe.each([
   );
 });
 
-describe('#SignIn', () => {
+describe('#SignInSchema', () => {
   suite('when the payload is valid', () => {
     it('returns the validated payload', () => {
       const payload = {
@@ -87,14 +91,14 @@ describe('#SignIn', () => {
         password: 'ChangeMe123!',
       };
 
-      expect(SignIn.assert(payload)).toEqual(payload);
+      expect(SignInSchema.assert(payload)).toEqual(payload);
     });
   });
 
   suite('when the email is invalid', () => {
     it('throws a validation error', () => {
       expect(() => {
-        SignIn.assert({
+        SignInSchema.assert({
           email: 'invalid-email',
           password: 'ChangeMe123!',
         });
@@ -103,12 +107,12 @@ describe('#SignIn', () => {
   });
 });
 
-describe('#SignUp', () => {
+describe('#SignUpSchema', () => {
   suite.each(['name', 'email', 'password'] as const)(
     'when %s has an invalid value',
     (field) => {
       it('returns the field translation key through Standard Schema', async () => {
-        const result = await SignUp['~standard'].validate({
+        const result = await SignUpSchema['~standard'].validate({
           name: 'Alpha',
           email: 'alpha@example.com',
           password: 'ChangeMe123!',
@@ -136,14 +140,14 @@ describe('#SignUp', () => {
         displayName: 'Alphacifer',
       };
 
-      expect(SignUp.assert(payload)).toEqual(payload);
+      expect(SignUpSchema.assert(payload)).toEqual(payload);
     });
   });
 
   suite('when a client supplies a role', () => {
     it('rejects the payload', () => {
       expect(() => {
-        SignUp.assert({
+        SignUpSchema.assert({
           name: 'Alpha',
           email: 'alpha@example.com',
           password: 'ChangeMe123!',

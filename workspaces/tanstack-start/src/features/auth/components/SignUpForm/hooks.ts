@@ -1,4 +1,4 @@
-import { SignUp, type TSignUp } from '@contracts/auth';
+import { SignUpSchema, type TSignUp } from '@contracts/auth';
 import {
   createFormHook,
   createFormHookContexts,
@@ -13,7 +13,7 @@ export const signUpFormOptions = formOptions({
   defaultValues: {} as TSignUp,
   validationLogic: revalidateLogic(),
   validators: {
-    onDynamic: SignUp,
+    onDynamic: SignUpSchema,
   },
 });
 
