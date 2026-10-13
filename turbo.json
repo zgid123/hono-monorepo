@@ -3,6 +3,9 @@
   "ui": "tui",
   "tasks": {
     "build": {
+      "env": [
+        "VITE_BETTER_AUTH_URL"
+      ],
       "dependsOn": [
         "^build"
       ],
@@ -13,6 +16,7 @@
       "outputs": [
         "lib/**",
         "dist/**",
+        ".output/**",
         ".next/**",
         "!.next/cache/**"
       ]

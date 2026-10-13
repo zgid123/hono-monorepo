@@ -2,5 +2,15 @@
   "$schema": "https://biomejs.dev/schemas/2.5.15/schema.json",
   "extends": [
     "@alphacifer/biome/config"
-  ]
+  ],
+  "files": {
+    "includes": [
+      "!!**/paraglide",
+      "!**/*.svg",
+      "!**/*.html"
+    ]
+  },
+  "vcs": {
+    "useIgnoreFile": true
+  }
 }

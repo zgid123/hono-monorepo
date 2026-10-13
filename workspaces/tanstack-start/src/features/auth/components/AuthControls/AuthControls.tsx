@@ -1,5 +1,4 @@
 import { Avatar, Button } from '@react/design-system/components';
-import { cn } from '@react/design-system/utils';
 import { useQueryClient } from '@tanstack/react-query';
 import { Link, useRouter } from '@tanstack/react-router';
 import type { JSX } from 'react';
@@ -15,7 +14,7 @@ export function AuthControls(): JSX.Element {
 
   if (session?.user) {
     return (
-      <div className={cn('flex items-center gap-2')}>
+      <div className='flex items-center gap-2'>
         <Avatar name={session.user.name} src={session.user.image} />
         <Button
           onClick={async () => {
@@ -25,15 +24,12 @@ export function AuthControls(): JSX.Element {
               return;
             }
 
-            await queryClient.cancelQueries({
-              queryKey: ['users'],
-            });
+            queryClient.clear();
 
-            queryClient.removeQueries({
-              queryKey: ['users'],
+            await router.navigate({
+              to: '/auth',
+              replace: true,
             });
-
-            await router.invalidate();
           }}
           type='button'
           variant='outline'

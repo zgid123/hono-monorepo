@@ -11,6 +11,12 @@ export const authenticatedApiMiddleware = createMiddleware({
 }).server(({ next }) => {
   setResponseHeader('Cache-Control', 'private, no-store');
 
+  const baseUrl = process.env.API_URL;
+
+  if (!baseUrl) {
+    throw new Error('API_URL must point to the Hono server origin');
+  }
+
   const cookie = getRequestHeader('cookie');
 
   if (!cookie) {
@@ -21,6 +27,7 @@ export const authenticatedApiMiddleware = createMiddleware({
     context: {
       apiClient: createApiClient({
         cookie,
+        baseUrl,
       }),
     },
   });

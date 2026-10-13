@@ -2,6 +2,9 @@ packages:
   - 'packages/**'
   - 'workspaces/**'
   - 'infrastructures/**'
+  - '!**/paraglide/**'
+  - '!**/.output/**'
+  - '!**/.nitro/**'
 allowBuilds:
   '@sentry/cli': false
   esbuild: false

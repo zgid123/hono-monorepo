@@ -7,7 +7,7 @@ import { paraglideMiddleware } from './integrations/i18n/paraglide/server';
 
 export default createServerEntry(
   wrapFetchWithSentry({
-    fetch(request: Request) {
+    fetch(request: Request): Promise<Response> {
       return paraglideMiddleware(request, () => handler.fetch(request));
     },
   }),

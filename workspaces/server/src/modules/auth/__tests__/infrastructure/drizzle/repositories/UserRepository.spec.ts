@@ -31,13 +31,13 @@ describe('#UserRepository', () => {
             id: user.id,
             role: user.role,
             name: user.name,
-            status: 'active',
             email: user.email,
             image: user.image,
-            displayName: user.displayName,
-            emailVerified: user.emailVerified,
+            status: 'active',
             createdAt: user.createdAt,
             updatedAt: user.updatedAt,
+            displayName: user.displayName,
+            emailVerified: user.emailVerified,
           }),
         );
         expect(result.total).toEqual(expect.any(Number));
@@ -65,97 +65,179 @@ describe('#UserRepository', () => {
   });
 
   describe('operation-specific updates', () => {
-    it('persists profile changes', async () => {
-      const entity = await subject.findOne({
-        id: user.id,
-      });
-
-      if (!entity) {
-        throw new Error('Expected user fixture to exist');
-      }
-
-      await subject.updateProfile({
-        user: entity.updateProfile({
-          name: 'Updated Name',
-          displayName: 'Updated Display Name',
-        }),
-      });
-
-      await expect(
-        subject.findOne({
+    suite('when profile fields are supplied', () => {
+      it('persists profile changes', async () => {
+        const entity = await subject.findOne({
           id: user.id,
-        }),
-      ).resolves.toEqual(
-        expect.objectContaining({
-          name: 'Updated Name',
-          displayName: 'Updated Display Name',
-        }),
-      );
+        });
+
+        if (!entity) {
+          throw new Error('Expected user fixture to exist');
+        }
+
+        await subject.updateProfile({
+          user: entity.updateProfile({
+            name: 'Updated Name',
+            displayName: 'Updated Display Name',
+          }),
+          fields: ['name', 'displayName'],
+        });
+
+        await expect(
+          subject.findOne({
+            id: user.id,
+          }),
+        ).resolves.toEqual(
+          expect.objectContaining({
+            name: 'Updated Name',
+            displayName: 'Updated Display Name',
+          }),
+        );
+      });
     });
 
-    it('preserves changes made by other operations using an older entity', async () => {
-      const entity = await subject.findOne({
-        id: user.id,
-      });
-
-      if (!entity) {
-        throw new Error('Expected user fixture to exist');
-      }
-
-      await subject.changeRole({
-        user: entity.changeRole({
-          role: 'admin',
-        }),
-      });
-      await subject.changeStatus({
-        user: entity.changeStatus({
-          status: 'banned',
-        }),
-      });
-      await subject.updateProfile({
-        user: entity.updateProfile({
-          name: 'Updated Name',
-        }),
-      });
-
-      await expect(
-        subject.findOne({
+    suite('when another operation has changed the user', () => {
+      it('preserves changes made by other operations using an older entity', async () => {
+        const entity = await subject.findOne({
           id: user.id,
-        }),
-      ).resolves.toEqual(
-        expect.objectContaining({
-          role: 'admin',
-          status: 'banned',
-          name: 'Updated Name',
-        }),
-      );
+        });
+
+        if (!entity) {
+          throw new Error('Expected user fixture to exist');
+        }
+
+        await subject.changeRole({
+          user: entity.changeRole({
+            role: 'admin',
+          }),
+        });
+        await subject.changeStatus({
+          user: entity.changeStatus({
+            status: 'banned',
+          }),
+        });
+        await subject.updateProfile({
+          user: entity.updateProfile({
+            name: 'Updated Name',
+          }),
+          fields: ['name'],
+        });
+
+        await expect(
+          subject.findOne({
+            id: user.id,
+          }),
+        ).resolves.toEqual(
+          expect.objectContaining({
+            role: 'admin',
+            name: 'Updated Name',
+            status: 'banned',
+          }),
+        );
+      });
     });
 
-    it('persists a banned status', async () => {
-      const entity = await subject.findOne({
-        id: user.id,
-      });
-
-      if (!entity) {
-        throw new Error('Expected user fixture to exist');
-      }
-
-      await subject.changeStatus({
-        user: entity.changeStatus({
-          status: 'banned',
-        }),
-      });
-
-      await expect(
-        subject.findOne({
+    suite('when concurrent updates change different profile fields', () => {
+      it('preserves concurrent profile changes loaded from the same state', async () => {
+        const entity = await subject.findOne({
           id: user.id,
-        }),
-      ).resolves.toEqual(
-        expect.objectContaining({
+        });
+
+        if (!entity) {
+          throw new Error('Expected user fixture to exist');
+        }
+
+        await Promise.all([
+          subject.updateProfile({
+            user: entity.updateProfile({
+              name: 'Concurrent Name',
+            }),
+            fields: ['name'],
+          }),
+          subject.updateProfile({
+            user: entity.updateProfile({
+              image: 'https://example.com/avatar.png',
+            }),
+            fields: ['image'],
+          }),
+        ]);
+
+        await expect(
+          subject.findOne({
+            id: user.id,
+          }),
+        ).resolves.toEqual(
+          expect.objectContaining({
+            name: 'Concurrent Name',
+            image: 'https://example.com/avatar.png',
+          }),
+        );
+      });
+    });
+
+    suite('when a nullable profile field is explicitly cleared', () => {
+      it('clears explicitly supplied nullable fields without replacing omitted fields', async () => {
+        const entity = await subject.findOne({
           id: user.id,
-          status: 'banned',
-        }),
-      );
+        });
+
+        if (!entity) {
+          throw new Error('Expected user fixture to exist');
+        }
+
+        await subject.updateProfile({
+          user: entity.updateProfile({
+            image: 'https://example.com/avatar.png',
+          }),
+          fields: ['image'],
+        });
+        await subject.updateProfile({
+          user: entity.updateProfile({
+            image: null,
+          }),
+          fields: ['image'],
+        });
+
+        await expect(
+          subject.findOne({
+            id: user.id,
+          }),
+        ).resolves.toEqual(
+          expect.objectContaining({
+            name: user.name,
+            image: null,
+          }),
+        );
+      });
+    });
+
+    suite('when the user is banned', () => {
+      it('persists a banned status', async () => {
+        const entity = await subject.findOne({
+          id: user.id,
+        });
+
+        if (!entity) {
+          throw new Error('Expected user fixture to exist');
+        }
+
+        await subject.changeStatus({
+          user: entity.changeStatus({
+            status: 'banned',
+          }),
+        });
+
+        await expect(
+          subject.findOne({
+            id: user.id,
+          }),
+        ).resolves.toEqual(
+          expect.objectContaining({
+            id: user.id,
+            status: 'banned',
+          }),
+        );
+      });
     });
   });
 });

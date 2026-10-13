@@ -1,5 +1,9 @@
 import { Command, type ICommandHandler } from '@cqrsx/core';
-import { type IUserRepository, UserError } from '@domain/auth';
+import {
+  type IUpdateUserProfileParams,
+  type IUserRepository,
+  UserError,
+} from '@domain/auth';
 
 export interface IUpdateUserProfileCommandParams {
   readonly name?: string;
@@ -63,6 +67,9 @@ export class UpdateUserProfileCommandHandler
 
     await this.#userRepository.updateProfile({
       user: updatedUser,
+      fields: (['name', 'image', 'displayName'] as const).filter(
+        (field: keyof IUpdateUserProfileParams) => command[field] !== undefined,
+      ),
     });
   }
 }

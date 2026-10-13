@@ -38,6 +38,7 @@ export function SignInForm({
       <form.AppForm>
         <form
           className='flex flex-col gap-4'
+          method='post'
           noValidate
           onSubmit={(event) => {
             event.preventDefault();

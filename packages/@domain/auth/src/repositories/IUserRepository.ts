@@ -1,4 +1,4 @@
-import type { UserEntity } from '../entities';
+import type { IUpdateUserProfileParams, UserEntity } from '../entities';
 
 export interface IFindOneUserParams {
   readonly id: string;
@@ -18,10 +18,14 @@ export interface IUserEntityParams {
   readonly user: UserEntity;
 }
 
+export interface IUpdateUserProfileRepositoryParams extends IUserEntityParams {
+  readonly fields: readonly (keyof IUpdateUserProfileParams)[];
+}
+
 export interface IUserRepository {
-  updateProfile(params: IUserEntityParams): Promise<void>;
   changeRole(params: IUserEntityParams): Promise<void>;
   changeStatus(params: IUserEntityParams): Promise<void>;
   list(params: IListUsersParams): Promise<IListUsersResult>;
   findOne(params: IFindOneUserParams): Promise<UserEntity | null>;
+  updateProfile(params: IUpdateUserProfileRepositoryParams): Promise<void>;
 }

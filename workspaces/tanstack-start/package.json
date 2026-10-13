@@ -10,7 +10,7 @@
     "generate-routes": "tsr generate",
     "build": "vite build",
     "preview": "vite preview",
-    "start": "node .output/server/index.mjs"
+    "start": "NODE_ENV=production node .output/server/index.mjs"
   },
   "dependencies": {
     "@config/i18n": "workspace:^",

@@ -64,14 +64,23 @@ function watchI18nMessages(): Plugin {
 }
 
 const config = defineConfig({
+  ssr: {
+    external: ['react', 'react-dom'],
+  },
   resolve: {
     tsconfigPaths: true,
+    dedupe: ['react', 'react-dom'],
   },
   plugins: [
     watchI18nMessages(),
     devtools(),
     paraglideVitePlugin(paraglideConfig),
-    nitro(),
+    nitro({
+      traceDeps: ['react', 'react-dom'],
+      rolldownConfig: {
+        external: [/^react(?:-dom)?(?:\/.*)?$/],
+      },
+    }),
     tailwindcss(),
     tanstackStart(),
     viteReact(),

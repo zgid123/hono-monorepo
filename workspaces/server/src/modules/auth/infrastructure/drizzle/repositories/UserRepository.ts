@@ -3,6 +3,7 @@ import {
   type IFindOneUserParams,
   type IListUsersParams,
   type IListUsersResult,
+  type IUpdateUserProfileRepositoryParams,
   type IUserEntityParams,
   type IUserRepository,
   UserEntity,
@@ -14,7 +15,7 @@ import { sessions } from '../schemas/sessions';
 import { users } from '../schemas/users';
 
 export interface IUserRepositoryParams {
-  drizzle: TDrizzle;
+  readonly drizzle: TDrizzle;
 }
 
 export class UserRepository implements IUserRepository {
@@ -69,14 +70,19 @@ export class UserRepository implements IUserRepository {
     });
   }
 
-  public async updateProfile({ user }: IUserEntityParams): Promise<void> {
+  public async updateProfile({
+    user,
+    fields,
+  }: IUpdateUserProfileRepositoryParams): Promise<void> {
     await this.#drizzle
       .update(users)
       .set({
-        name: user.name,
-        image: user.image,
+        name: fields.includes('name') ? user.name : undefined,
+        image: fields.includes('image') ? user.image : undefined,
         updatedAt: user.updatedAt,
-        displayName: user.displayName,
+        displayName: fields.includes('displayName')
+          ? user.displayName
+          : undefined,
       })
       .where(eq(users.id, user.id));
   }
@@ -96,10 +102,10 @@ export class UserRepository implements IUserRepository {
       await transaction
         .update(users)
         .set({
+          banned: user.status === 'banned',
           banReason: user.banReason,
           updatedAt: user.updatedAt,
           banExpires: user.banExpires,
-          banned: user.status === 'banned',
         })
         .where(eq(users.id, user.id));
 

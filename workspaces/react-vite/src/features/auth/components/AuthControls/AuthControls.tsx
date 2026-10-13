@@ -1,6 +1,7 @@
-import { Avatar, Button } from '@react/design-system/components';
+import { Avatar, Button, toast } from '@react/design-system/components';
 import { cn } from '@react/design-system/utils';
-import { Link } from '@tanstack/react-router';
+import { useQueryClient } from '@tanstack/react-query';
+import { Link, useRouter } from '@tanstack/react-router';
 import type { JSX } from 'react';
 
 import { authClient } from '#/integrations/betterAuth/authClient';
@@ -11,6 +12,8 @@ export function AuthControls(): JSX.Element {
   useLocale();
 
   const { data: session, isPending } = authClient.useSession();
+  const queryClient = useQueryClient();
+  const router = useRouter();
 
   if (isPending) {
     return (
@@ -26,11 +29,24 @@ export function AuthControls(): JSX.Element {
 
   if (session?.user) {
     return (
-      <div className={cn('flex items-center gap-2')}>
+      <div className='flex items-center gap-2'>
         <Avatar name={session.user.name} src={session.user.image} />
         <Button
-          onClick={() => {
-            void authClient.signOut();
+          onClick={async () => {
+            const { error } = await authClient.signOut();
+
+            if (error) {
+              toast.error(error.message);
+
+              return;
+            }
+
+            queryClient.clear();
+
+            await router.navigate({
+              to: '/auth',
+              replace: true,
+            });
           }}
           type='button'
           variant='outline'

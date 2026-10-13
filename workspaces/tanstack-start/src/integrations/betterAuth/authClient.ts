@@ -15,17 +15,19 @@ interface IAuthClientOptions extends BetterAuthClientOptions {
   plugins: [typeof additionalFields];
 }
 
-const authBaseURL = import.meta.env.VITE_BETTER_AUTH_URL;
+const authBaseUrl = import.meta.env.SSR
+  ? process.env.BETTER_AUTH_URL
+  : import.meta.env.VITE_BETTER_AUTH_URL;
 
-if (!authBaseURL) {
+if (!authBaseUrl) {
   throw new Error(
-    'VITE_BETTER_AUTH_URL must point to the server auth endpoint',
+    'Set BETTER_AUTH_URL for the server and VITE_BETTER_AUTH_URL for the browser auth endpoint',
   );
 }
 
 export const authClient: ReturnType<
   typeof createAuthClient<IAuthClientOptions>
 > = createAuthClient<IAuthClientOptions>({
-  baseURL: authBaseURL,
+  baseURL: authBaseUrl,
   plugins: [additionalFields],
 });

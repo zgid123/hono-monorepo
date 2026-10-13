@@ -8,7 +8,7 @@ pnpm install
 
 Configure `workspaces/server/.env` for your local database. The server loads this file when started from the server workspace. At minimum, set `DB_NAME`, `DB_USER`, `DB_PASSWORD`, `ADMIN_EMAIL`, and `BETTER_AUTH_SECRET`. Set `DB_HOST` and `DB_PORT` if PostgreSQL is not available on `localhost:5432`. `PORT` defaults to `3000`, and `detect-port` selects the next free port when needed. `ADMIN_PASSWORD` is optional; setting it creates the initial admin account.
 
-Set `BETTER_AUTH_URL` to the server origin (for example, `http://localhost:3000`) and include the TanStack Start origin in `ALLOWED_ORIGINS` (for example, `http://localhost:3004`). TanStack Start connects to the server at `/api/v1/auth`.
+Set `BETTER_AUTH_URL` to the public auth origin and include permitted frontend origins in `ALLOWED_ORIGINS`. For local development, use `BETTER_AUTH_URL=http://localhost:3000` and include the TanStack Start origin `http://localhost:3001`; the browser calls Hono directly. When Vercel rewrites the frontend's `/api/v1/auth/*` requests to this server, set `BETTER_AUTH_URL` to the public frontend origin and include it in `ALLOWED_ORIGINS`. React Vite calls Hono directly and must also have its origin included in `ALLOWED_ORIGINS`.
 
 For development, apply migrations and create the initial admin account before starting the server. Run the migration command again after adding migrations. The workspace packages resolve to their TypeScript files and do not need to be built:
 
